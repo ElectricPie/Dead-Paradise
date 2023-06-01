@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "InputActionValue.h"
 #include "PlayerCamera.generated.h"
+
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class DEADPARADISE_API APlayerCamera : public APawn
@@ -18,6 +22,15 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputMappingContext* InputMappingContext;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputAction* UnlockCameraAction;
+
+	void UnlockCamera(const FInputActionValue& Value);
+	
 
 public:	
 	// Called every frame
