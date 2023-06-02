@@ -56,6 +56,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float MovementSpeedModifier = 500.f;
-	
-	bool* bCameraIsUnlocked;
+
+	bool bCameraIsUnlocked = false;
 };

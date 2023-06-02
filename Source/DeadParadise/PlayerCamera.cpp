@@ -42,20 +42,19 @@ void APlayerCamera::BeginPlay()
 
 void APlayerCamera::UnlockCamera(const FInputActionValue& Value)
 {
-	if (const bool CurrentValue = Value.Get<bool>())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Unlock Camera"));
-	}
+	bCameraIsUnlocked = Value.Get<bool>();
 }
 
 void APlayerCamera::MoveCamera(const FInputActionValue& Value)
 {
-	const FVector MoveAxisValue = Value.Get<FVector>();
-	
-	UE_LOG(LogTemp, Warning, TEXT("Move Value %s"), *MoveAxisValue.ToString());
-	
-	FVector DeltaLocation = MoveAxisValue * MovementSpeedModifier * UGameplayStatics::GetWorldDeltaSeconds(this);
-	AddActorLocalOffset(DeltaLocation, true);
+	// Only allow the camera to move if the unlock camera button is held down
+	if (bCameraIsUnlocked)
+	{
+		const FVector MoveAxisValue = Value.Get<FVector>();
+
+		FVector DeltaLocation = MoveAxisValue * MovementSpeedModifier * UGameplayStatics::GetWorldDeltaSeconds(this);
+		AddActorLocalOffset(DeltaLocation, true);
+	}
 }
 
 // Called every frame
