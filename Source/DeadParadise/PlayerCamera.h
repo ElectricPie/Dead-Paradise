@@ -29,7 +29,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	UInputAction* UnlockCameraAction;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputAction* MoveCameraAction;
+
 	void UnlockCamera(const FInputActionValue& Value);
+
+	void MoveCamera(const FInputActionValue& Value);
 	
 
 public:	
@@ -46,6 +51,11 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class USpringArmComponent* SpringArmComponent;
 
-	UPROPERTY(VisibleAnywhere, Category = "Coponents")
+	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCameraComponent* CameraComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float MovementSpeedModifier = 500.f;
+	
+	bool* bCameraIsUnlocked;
 };

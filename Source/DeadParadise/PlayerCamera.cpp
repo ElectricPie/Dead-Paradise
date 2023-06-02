@@ -8,6 +8,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APlayerCamera::APlayerCamera()
@@ -47,6 +48,16 @@ void APlayerCamera::UnlockCamera(const FInputActionValue& Value)
 	}
 }
 
+void APlayerCamera::MoveCamera(const FInputActionValue& Value)
+{
+	const FVector MoveAxisValue = Value.Get<FVector>();
+	
+	UE_LOG(LogTemp, Warning, TEXT("Move Value %s"), *MoveAxisValue.ToString());
+	
+	FVector DeltaLocation = MoveAxisValue * MovementSpeedModifier * UGameplayStatics::GetWorldDeltaSeconds(this);
+	AddActorLocalOffset(DeltaLocation, true);
+}
+
 // Called every frame
 void APlayerCamera::Tick(float DeltaTime)
 {
@@ -61,6 +72,7 @@ void APlayerCamera::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	if (UEnhancedInputComponent* PlayerEnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		PlayerEnhancedInputComponent->BindAction(UnlockCameraAction, ETriggerEvent::Triggered, this, &APlayerCamera::UnlockCamera);
+		PlayerEnhancedInputComponent->BindAction(MoveCameraAction, ETriggerEvent::Triggered, this, &APlayerCamera::MoveCamera);
 	}
 }
 
