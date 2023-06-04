@@ -10,10 +10,14 @@
 class DEADPARADISE_API PathingNode
 {
 public:
-	PathingNode(bool NodeIsWalkable, FVector* NodeWorldPosition);
+	PathingNode();
 	~PathingNode();
+
+	void SetupNode(bool IsWalkable, FVector NodeWorldPosition);
+
+	FVector GetWorldPosition() const;
 
 private:
 	bool bIsWalkable;
-	FVector* WorldPosition;
+	FVector WorldPosition;
 };

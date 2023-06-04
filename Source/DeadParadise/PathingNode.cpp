@@ -3,12 +3,23 @@
 
 #include "PathingNode.h"
 
-PathingNode::PathingNode(bool NodeIsWalkable, FVector* NodeWorldPosition)
+PathingNode::PathingNode()
 {
-	bIsWalkable = NodeIsWalkable;
-	WorldPosition = NodeWorldPosition;
+	bIsWalkable = false;
+	WorldPosition = FVector::Zero();
 }
 
 PathingNode::~PathingNode()
 {
+}
+
+void PathingNode::SetupNode(bool IsWalkable, FVector NodeWorldPosition)
+{
+	bIsWalkable = IsWalkable;
+	WorldPosition = NodeWorldPosition;
+}
+
+FVector PathingNode::GetWorldPosition() const
+{
+	return WorldPosition;
 }
