@@ -19,7 +19,7 @@ void FPathfindingComponentVisualizer::DrawWorldGrid(FPrimitiveDrawInterface* PDI
 {
 	// Draws the box for the GridWorldSize
 	const FVector GridSize = FVector(Area, 50.f);
-	const FBox GridArea = FBox::BuildAABB(Location, GridSize);
+	const FBox GridArea = FBox::BuildAABB(Location, GridSize / 2);
 		
 	DrawWireBox(PDI, GridArea, FLinearColor::Red, SDPG_Foreground);
 }
