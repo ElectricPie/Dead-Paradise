@@ -55,8 +55,11 @@ void UPathfindingGrid::GenerateGrid()
 			
 			bool bIsWalkable = !UKismetSystemLibrary::SphereOverlapActors(this, WorldPoint, NodeRadius, TraceObjectTypes, nullptr, IgnoreActors, HitActors);
 			
-			FColor WalkableColor = bIsWalkable ? FColor::Green : FColor::Red;
-			DrawDebugBox(GetWorld(), WorldPoint, FVector(NodeRadius), WalkableColor, false, 10.f);
+			if (ShowDebug)
+			{
+				FColor WalkableColor = bIsWalkable ? FColor::Green : FColor::Red;
+				DrawDebugBox(GetWorld(), WorldPoint, FVector(NodeRadius) * 0.9f, WalkableColor, false, 10.f);
+			}
 			
 			Grid[X*GridSizeY+Y].SetupNode(bIsWalkable, WorldPoint);
 		}

@@ -27,6 +27,9 @@ public:
 	
 private:
 	friend class FPathfindingComponentVisualizer;
+
+	UPROPERTY(EditAnywhere, Category = "A* Grid", meta = (AllowPrivateAccess = "true"))
+	bool ShowDebug;
 	
 	UPROPERTY(EditAnywhere, Category = "A* Grid", meta = (AllowPrivateAccess = "true"))
 	FVector2D GridWorldSize;
