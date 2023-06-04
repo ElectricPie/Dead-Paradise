@@ -13,12 +13,6 @@ UPathfindingGrid::UPathfindingGrid()
 	// ...
 }
 
-
-void UPathfindingGrid::TestMethod()
-{
-	
-}
-
 // Called when the game starts
 void UPathfindingGrid::BeginPlay()
 {

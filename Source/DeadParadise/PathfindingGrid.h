@@ -17,10 +17,6 @@ public:
 	// Sets default values for this component's properties
 	UPathfindingGrid();
 
-	float Test;
-
-	void TestMethod();
-
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

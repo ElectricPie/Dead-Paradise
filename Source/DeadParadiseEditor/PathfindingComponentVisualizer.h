@@ -13,5 +13,7 @@ class DEADPARADISEEDITOR_API FPathfindingComponentVisualizer : public FComponent
 public:
 	virtual void DrawVisualization(const UActorComponent* Component, const FSceneView* View,
 		FPrimitiveDrawInterface* PDI) override;
+	
+	void DrawWorldGrid(FPrimitiveDrawInterface* PDI, const FVector& Location, FVector2D Area) const;
 };
  

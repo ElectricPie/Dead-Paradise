@@ -10,9 +10,16 @@ void FPathfindingComponentVisualizer::DrawVisualization(const UActorComponent* C
 {
 	if (const UPathfindingGrid* Grid = Cast<UPathfindingGrid>(Component))
 	{
-		UE_LOG(DeadParadiseEditor, Warning, TEXT("Drawing Visualization"));
-		
-		// DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.f, 12, FColor::Red, false);
-		DrawWireSphere(PDI, Grid->GetOwner()->GetActorLocation(), FColor::Red, 10.f, 12, SDPG_Foreground);
+		// Draws the box for the GridWorldSize
+		DrawWorldGrid(PDI, Grid->GetOwner()->GetActorLocation(), Grid->GridWorldSize);
 	}
+}
+
+void FPathfindingComponentVisualizer::DrawWorldGrid(FPrimitiveDrawInterface* PDI, const FVector& Location, const FVector2D Area) const
+{
+	// Draws the box for the GridWorldSize
+	const FVector GridSize = FVector(Area, 50.f);
+	const FBox GridArea = FBox::BuildAABB(Location, GridSize);
+		
+	DrawWireBox(PDI, GridArea, FLinearColor::Red, SDPG_Foreground);
 }
