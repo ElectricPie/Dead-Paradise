@@ -30,6 +30,30 @@ void UPathfindingGrid::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+	if (!TestActor) return;
+
+	const PathingNode* NodeAtActor = NodeFromWorldPoint(TestActor->GetActorLocation());
+	if (!NodeAtActor) return;
+	
+	// UE_LOG(LogTemp, Warning, TEXT("Actor Node World Pos: %s"), *NodeAtActor->GetWorldPosition().ToString());
+	
+	DrawDebugBox(GetWorld(), NodeAtActor->GetWorldPosition(), FVector(NodeRadius) * 0.9f, FColor::Cyan);
+}
+
+PathingNode* UPathfindingGrid::NodeFromWorldPoint(const FVector& WorldPosition) const
+{
+	if (Grid == nullptr) return nullptr;
+	
+	float PosX = (WorldPosition.X - GetOwner()->GetActorLocation().X + GridWorldSize.X * 0.5f) / NodeDiameter;
+	float PoxY = (WorldPosition.Y - GetOwner()->GetActorLocation().Y + GridWorldSize.Y * 0.5f) / NodeDiameter;
+	
+	PosX = FMath::Clamp(PosX, 0, GridWorldSize.X - 1);
+	PoxY = FMath::Clamp(PoxY, 0, GridWorldSize.Y - 1);
+
+	const int NodeArrayX = FMath::FloorToInt(PosX);
+	const int NodeArrayY = FMath::FloorToInt(PoxY);
+
+	return &Grid[NodeArrayX*GridSizeY+NodeArrayY];
 }
 
 void UPathfindingGrid::GenerateGrid()

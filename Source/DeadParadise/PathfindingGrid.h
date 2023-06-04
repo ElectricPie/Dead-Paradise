@@ -9,7 +9,7 @@
 class PathingNode;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class DEADPARADISE_API UPathfindingGrid : public USceneComponent
+class DEADPARADISE_API UPathfindingGrid : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -24,18 +24,24 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+public:
+	PathingNode* NodeFromWorldPoint(const FVector& WorldPosition) const;
 	
 private:
 	friend class FPathfindingComponentVisualizer;
 	
 	UPROPERTY(EditAnywhere, Category = "A* Grid", meta = (AllowPrivateAccess = "true"))
-	FVector2D GridWorldSize;
+	FVector2D GridWorldSize = FVector2D(1000);
 
 	UPROPERTY(EditAnywhere, Category = "A* Grid", meta = (AllowPrivateAccess = "true"))
-	float NodeRadius = 1.f;
+	float NodeRadius = 50.f;
 	
 	UPROPERTY(EditAnywhere, Category = "A* Grid", meta = (AllowPrivateAccess = "true"))
-	UDataLayerAsset* UnwalkableDataLayer;
+	UDataLayerAsset* UnwalkableDataLayer = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "A* Grid", meta = (AllowPrivateAccess = "true"))
+	AActor* TestActor = nullptr;
 
 	float NodeDiameter;
 	int GridSizeX;
