@@ -17,6 +17,8 @@ public:
 
 	FVector GetWorldPosition() const;
 
+	bool IsWalkable() const;
+
 private:
 	bool bIsWalkable;
 	FVector WorldPosition;

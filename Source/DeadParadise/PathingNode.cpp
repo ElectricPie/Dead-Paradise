@@ -23,3 +23,8 @@ FVector PathingNode::GetWorldPosition() const
 {
 	return WorldPosition;
 }
+
+bool PathingNode::IsWalkable() const
+{
+	return bIsWalkable;
+}

@@ -67,15 +67,8 @@ void UPathfindingGrid::GenerateGrid()
 					break;
 				}
 			}
-
-			if (ShowDebug)
-			{
-				FColor WalkableColor = bIsWalkable ? FColor::Green : FColor::Red;
-				DrawDebugBox(GetWorld(), WorldPoint, FVector(NodeRadius) * 0.9f, WalkableColor, false, 10.f);
-			}
 			
 			Grid[X*GridSizeY+Y].SetupNode(bIsWalkable, WorldPoint);
 		}
 	}
 }
-
