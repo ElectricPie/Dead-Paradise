@@ -11,14 +11,14 @@ void FPathfindingComponentVisualizer::DrawVisualization(const UActorComponent* C
 	if (const UPathfindingGrid* Grid = Cast<UPathfindingGrid>(Component))
 	{
 		// Draws the box for the GridWorldSize
-		DrawWorldGrid(PDI, Grid->GetOwner()->GetActorLocation(), Grid->GridWorldSize);
+		DrawWorldGrid(PDI, Grid->GetOwner()->GetActorLocation(), Grid->GridWorldSize, Grid->NodeRadius * 2);
 	}
 }
 
-void FPathfindingComponentVisualizer::DrawWorldGrid(FPrimitiveDrawInterface* PDI, const FVector& Location, const FVector2D Area) const
+void FPathfindingComponentVisualizer::DrawWorldGrid(FPrimitiveDrawInterface* PDI, const FVector& Location, const FVector2D Area, float NodeRadius) const
 {
 	// Draws the box for the GridWorldSize
-	const FVector GridSize = FVector(Area, 50.f);
+	const FVector GridSize = FVector(Area, NodeRadius);
 	const FBox GridArea = FBox::BuildAABB(Location, GridSize / 2);
 		
 	DrawWireBox(PDI, GridArea, FLinearColor::Red, SDPG_Foreground);
