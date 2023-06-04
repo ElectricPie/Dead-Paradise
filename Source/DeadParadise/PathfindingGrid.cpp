@@ -52,9 +52,22 @@ void UPathfindingGrid::GenerateGrid()
 			TArray<TEnumAsByte<EObjectTypeQuery>> TraceObjectTypes;
 			TArray<AActor*> IgnoreActors;
 			TArray<AActor*> HitActors;
+
+			bool bIsWalkable = true;
 			
-			bool bIsWalkable = !UKismetSystemLibrary::SphereOverlapActors(this, WorldPoint, NodeRadius, TraceObjectTypes, nullptr, IgnoreActors, HitActors);
-			
+			UKismetSystemLibrary::SphereOverlapActors(this, WorldPoint, NodeRadius, TraceObjectTypes, nullptr, IgnoreActors, HitActors);
+
+			// Check if the overlapping actors are unwalkable
+			for (const AActor* Actor : HitActors)
+			{
+				// Stop checking actors when any are unwalkable
+				if (Actor->ContainsDataLayer(UnwalkableDataLayer))
+				{
+					bIsWalkable = false;
+					break;
+				}
+			}
+
 			if (ShowDebug)
 			{
 				FColor WalkableColor = bIsWalkable ? FColor::Green : FColor::Red;
