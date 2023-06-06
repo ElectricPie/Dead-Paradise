@@ -30,19 +30,21 @@ void UPathfindingGrid::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-	if (!TestActor) return;
-
-	const PathingNode* NodeAtActor = NodeFromWorldPoint(TestActor->GetActorLocation());
-	if (!NodeAtActor) return;
-	
-	// UE_LOG(LogTemp, Warning, TEXT("Actor Node World Pos: %s"), *NodeAtActor->GetWorldPosition().ToString());
-	
-	DrawDebugBox(GetWorld(), NodeAtActor->GetWorldPosition(), FVector(NodeRadius) * 0.9f, FColor::Cyan);
 }
 
-PathingNode* UPathfindingGrid::NodeFromWorldPoint(const FVector& WorldPosition) const
+float UPathfindingGrid::GetNodeRadius()
 {
-	if (Grid == nullptr) return nullptr;
+	return NodeRadius;
+}
+
+FPathingNode* UPathfindingGrid::NodeFromWorldPoint(const FVector& WorldPosition) const
+{
+	if (!Grid)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NFWP returning null"));
+	
+		return new FPathingNode();
+	}
 	
 	float PosX = (WorldPosition.X - GetOwner()->GetActorLocation().X + GridWorldSize.X * 0.5f) / NodeDiameter;
 	float PoxY = (WorldPosition.Y - GetOwner()->GetActorLocation().Y + GridWorldSize.Y * 0.5f) / NodeDiameter;
@@ -50,26 +52,60 @@ PathingNode* UPathfindingGrid::NodeFromWorldPoint(const FVector& WorldPosition) 
 	PosX = FMath::Clamp(PosX, 0, GridWorldSize.X - 1);
 	PoxY = FMath::Clamp(PoxY, 0, GridWorldSize.Y - 1);
 
-	const int NodeArrayX = FMath::FloorToInt(PosX);
-	const int NodeArrayY = FMath::FloorToInt(PoxY);
+	const int32 NodeArrayX = FMath::FloorToInt32(PosX);
+	const int32 NodeArrayY = FMath::FloorToInt32(PoxY);
 
 	return &Grid[NodeArrayX*GridSizeY+NodeArrayY];
 }
 
+TArray<FPathingNode*> UPathfindingGrid::GetNeighbouringNodes(const FPathingNode* Node)
+{
+	TArray<FPathingNode*> NeighbourNodes = TArray<FPathingNode*>(nullptr, 0);
+	
+	if (!Grid)
+	{
+		return NeighbourNodes;
+	}
+	
+	for (int32 X = -1; X <= 1; X++)
+	{
+		for (int32 Y = -1; Y <= 1; Y++)
+		{
+			if (X == 0 && Y == 0)
+			{
+				continue;
+			}
+
+			const int32 CheckX = Node->GetGridX() + X;
+			const int32 CheckY = Node->GetGridY() + Y;
+			
+			if (CheckX >= 0 && CheckX < GridSizeX && CheckY >= 0 && CheckY < GridSizeY)
+			{
+				NeighbourNodes.Add(&Grid[CheckX*GridSizeY+CheckY]);
+			}
+		}
+	}
+
+	return NeighbourNodes;
+}
+
 void UPathfindingGrid::GenerateGrid()
 {
+	// Clear the grid to prevent anything accessing it while it is being generated
+	Grid = nullptr;
+	
 	UE_LOG(LogTemp, Warning, TEXT("Generating grid sized %dx%d"), GridSizeX, GridSizeY);
 	
 	NodeDiameter = NodeRadius * 2;
-	GridSizeX = FGenericPlatformMath::RoundToInt(GridWorldSize.X / NodeDiameter);
-	GridSizeY = FGenericPlatformMath::RoundToInt(GridWorldSize.Y / NodeDiameter);
+	GridSizeX = FMath::RoundToInt32(GridWorldSize.X / NodeDiameter);
+	GridSizeY = FMath::RoundToInt32(GridWorldSize.Y / NodeDiameter);
 	
-	Grid = new PathingNode[GridSizeX*GridSizeY];
-	FVector WorldBottomLeft = GetOwner()->GetActorLocation() - FVector::ForwardVector * GridWorldSize.X / 2 - FVector::RightVector * GridWorldSize.Y / 2;
+	FPathingNode* GeneratedGrid = new FPathingNode[GridSizeX*GridSizeY];
+	const FVector WorldBottomLeft = GetOwner()->GetActorLocation() - FVector::ForwardVector * GridWorldSize.X / 2 - FVector::RightVector * GridWorldSize.Y / 2;
 	
-	for (int X = 0; X < GridSizeX; X++)
+	for (int32 X = 0; X < GridSizeX; X++)
 	{
-		for (int Y = 0; Y < GridSizeY; Y++)
+		for (int32 Y = 0; Y < GridSizeY; Y++)
 	 	{
 			FVector WorldPoint = WorldBottomLeft + FVector::ForwardVector * (X * NodeDiameter + NodeRadius) + FVector::RightVector * (Y * NodeDiameter + NodeRadius);
 			
@@ -92,7 +128,10 @@ void UPathfindingGrid::GenerateGrid()
 				}
 			}
 			
-			Grid[X*GridSizeY+Y].SetupNode(bIsWalkable, WorldPoint);
+			GeneratedGrid[X*GridSizeY+Y].SetupNode(bIsWalkable, WorldPoint, X, Y);
 		}
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Grid finished generating"));
+	Grid = GeneratedGrid;
 }

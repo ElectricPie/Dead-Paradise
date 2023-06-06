@@ -39,7 +39,7 @@ void FPathfindingComponentVisualizer::DrawGridNodes(FPrimitiveDrawInterface* PDI
 			for (int Y = 0; Y < PathfindingGrid->GridSizeY; Y++)
 			{
 				// Draws the box for each node
-				const PathingNode* Grid = PathfindingGrid->Grid;
+				const FPathingNode* Grid = PathfindingGrid->Grid;
 				FLinearColor WalkableColor = Grid[X*PathfindingGrid->GridSizeY+Y].IsWalkable() ? FLinearColor::Green : FLinearColor::Red;
 				const FVector NodeSize = FVector(PathfindingGrid->NodeRadius) * 0.9f;
 				const FBox NodeBox = FBox::BuildAABB(Grid[X*PathfindingGrid->GridSizeY+Y].GetWorldPosition(), NodeSize * 0.9f);

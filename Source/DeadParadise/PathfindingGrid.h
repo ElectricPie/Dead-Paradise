@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "PathfindingGrid.generated.h"
 
-class PathingNode;
+class FPathingNode;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DEADPARADISE_API UPathfindingGrid : public UActorComponent
@@ -25,8 +25,11 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-public:
-	PathingNode* NodeFromWorldPoint(const FVector& WorldPosition) const;
+	float GetNodeRadius();
+	
+	FPathingNode* NodeFromWorldPoint(const FVector& WorldPosition) const;
+
+	TArray<FPathingNode*> GetNeighbouringNodes(const FPathingNode* Node);
 	
 private:
 	friend class FPathfindingComponentVisualizer;
@@ -40,13 +43,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "A* Grid", meta = (AllowPrivateAccess = "true"))
 	UDataLayerAsset* UnwalkableDataLayer = nullptr;
 
-	UPROPERTY(EditAnywhere, Category = "A* Grid", meta = (AllowPrivateAccess = "true"))
-	AActor* TestActor = nullptr;
-
 	float NodeDiameter;
-	int GridSizeX;
-	int GridSizeY;
-	PathingNode* Grid = nullptr;
+	int32 GridSizeX;
+	int32 GridSizeY;
+	FPathingNode* Grid = nullptr;
 	
 	UFUNCTION(CallInEditor, Category = "A* Grid", meta = (ToolTip="Generates grid data to be visualized in the editor, the data will be lost when playing or closing the editor"))
 	void GenerateGrid();

@@ -7,19 +7,28 @@
 /**
  * 
  */
-class DEADPARADISE_API PathingNode
+class DEADPARADISE_API FPathingNode
 {
 public:
-	PathingNode();
-	~PathingNode();
+	FPathingNode();
+	~FPathingNode();
 
-	void SetupNode(bool IsWalkable, FVector NodeWorldPosition);
+	int32 GCost;
+	int32 HCost;
+	FPathingNode* ParentNode = nullptr;
 
-	FVector GetWorldPosition() const;
+	void SetupNode(bool IsWalkable, const FVector& NodeWorldPosition, int32 NodeGridX, int32 NodeGridY);
 
 	bool IsWalkable() const;
+	FVector GetWorldPosition() const;
+	int32 GetGridX() const;
+	int32 GetGridY() const;
+
+	int32 GetFCost() const;
 
 private:
 	bool bIsWalkable;
 	FVector WorldPosition;
+	int32 GridX;
+	int32 GridY;
 };
