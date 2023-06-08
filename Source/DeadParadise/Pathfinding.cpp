@@ -59,13 +59,13 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 {
 	if (!PathingGridComponent) return;
 	
-	FPathingNode StartNode = *PathingGridComponent->NodeFromWorldPoint(StartPosition);
-	FPathingNode TargetNode = *PathingGridComponent->NodeFromWorldPoint(TargetPosition);
+	FPathingNode* StartNode = PathingGridComponent->NodeFromWorldPoint(StartPosition);
+	FPathingNode* TargetNode = PathingGridComponent->NodeFromWorldPoint(TargetPosition);
 	
 	TArray<FPathingNode*> OpenSet;
 	TSet<FPathingNode*> ClosedSet;
 	
-	OpenSet.Init(&StartNode, 1);
+	OpenSet.Init(StartNode, 1);
 	
 	while (OpenSet.Num() > 0)
 	{
@@ -85,9 +85,9 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 		OpenSet.Remove(CurrentNode);
 		ClosedSet.Add(CurrentNode);
 
-		if (CurrentNode->GetGridX() == TargetNode.GetGridX() && CurrentNode->GetGridY() == TargetNode.GetGridY())
+		if (CurrentNode->GetGridX() == TargetNode->GetGridX() && CurrentNode->GetGridY() == TargetNode->GetGridY())
 		{
-			RetracePath(StartNode, *CurrentNode);
+			RetracePath(StartNode, CurrentNode);
 			return;
 		}
 		
@@ -102,7 +102,7 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 			if (NewMovementCostToNeighbour < Neighbour->GCost || !OpenSet.Contains(Neighbour))
 			{
 				Neighbour->GCost = NewMovementCostToNeighbour;
-				Neighbour->HCost = GetDistance(Neighbour, &TargetNode);
+				Neighbour->HCost = GetDistance(Neighbour, TargetNode);
 				Neighbour->ParentNode = new FPathingNode();
 				*Neighbour->ParentNode = *CurrentNode;
 			
@@ -129,22 +129,17 @@ int32 UPathfinding::GetDistance(const FPathingNode* NodeA, const FPathingNode* N
 	return 14 * DistX + 10 * (DistY - DistX);
 }
 
-void UPathfinding::RetracePath(const FPathingNode& StartNode, const FPathingNode& EndNode) const
+void UPathfinding::RetracePath(const FPathingNode* StartNode, FPathingNode* EndNode) const
 {
 	TArray<FPathingNode*> Path;
-	FPathingNode CurrentNode = EndNode;
+	FPathingNode* CurrentNode = EndNode;
 
-	while (CurrentNode.GetGridX() != StartNode.GetGridX() || CurrentNode.GetGridY() != StartNode.GetGridY())
+	while (CurrentNode->GetGridX() != StartNode->GetGridX() || CurrentNode->GetGridY() != StartNode->GetGridY())
 	{
-		Path.Add(&CurrentNode);
-		CurrentNode = *CurrentNode.ParentNode;
-		DrawDebugSphere(GetWorld(), CurrentNode.GetWorldPosition(), PathingGridComponent->GetNodeRadius(), 12, FColor::Black);		
+		Path.Add(CurrentNode);
+		CurrentNode = CurrentNode->ParentNode;
+		DrawDebugSphere(GetWorld(), CurrentNode->GetWorldPosition(), PathingGridComponent->GetNodeRadius(), 12, FColor::Black);		
 	}
 
 	Algo::Reverse(Path);
-
-	// for (int32 I = 0; I < Path.Num(); I++)
-	// {
-	// 	
-	// }
 }

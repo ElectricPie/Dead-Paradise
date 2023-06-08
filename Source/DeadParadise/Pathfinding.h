@@ -39,5 +39,5 @@ private:
 	
 	UPathfindingGrid* PathingGridComponent = nullptr;
 
-	void RetracePath(const FPathingNode& StartNode, const FPathingNode& EndNode) const;
+	void RetracePath(const FPathingNode* StartNode, FPathingNode* EndNode) const;
 };
