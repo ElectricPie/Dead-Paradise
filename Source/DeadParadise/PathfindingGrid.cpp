@@ -32,9 +32,14 @@ void UPathfindingGrid::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-float UPathfindingGrid::GetNodeRadius()
+float UPathfindingGrid::GetNodeRadius() const
 {
 	return NodeRadius;
+}
+
+int UPathfindingGrid::GetGridSize() const
+{
+	return GridSizeX * GridSizeY;
 }
 
 FPathingNode* UPathfindingGrid::NodeFromWorldPoint(const FVector& WorldPosition) const

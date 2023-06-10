@@ -33,11 +33,14 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = "Test", meta = (AllowPrivateAccess = "true"))
 	AActor* Seeker;
-
+	
 	UPROPERTY(EditAnywhere, Category = "Test", meta = (AllowPrivateAccess = "true"))
 	AActor* Target;
 	
 	UPathfindingGrid* PathingGridComponent = nullptr;
+
+	FTimerHandle DebugTimerHandle;
+	void DebugPathFind();
 
 	void RetracePath(const FPathingNode* StartNode, FPathingNode* EndNode) const;
 };

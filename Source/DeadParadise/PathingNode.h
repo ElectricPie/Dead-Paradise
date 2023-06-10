@@ -3,15 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "HeapItem.h"
 
 /**
  * 
  */
-class DEADPARADISE_API FPathingNode
+class DEADPARADISE_API FPathingNode : public THeapItem<FPathingNode>
 {
 public:
 	FPathingNode();
-	~FPathingNode();
+	virtual ~FPathingNode() override;
+	bool operator==(const FPathingNode& OtherNode) const;
 
 	int32 GCost;
 	int32 HCost;
@@ -25,6 +27,9 @@ public:
 	int32 GetGridY() const;
 
 	int32 GetFCost() const;
+
+	using THeapItem::CompareTo;
+	virtual int32 CompareTo(const FPathingNode* NodeToCompare) override;
 
 private:
 	bool bIsWalkable;

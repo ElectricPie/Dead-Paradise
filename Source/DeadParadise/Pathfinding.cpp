@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#pragma PRAGMA_DISABLE_OPTIMIZATION
+#pragma UE_DISABLE_OPTIMIZATION
 
 #include "Pathfinding.h"
 
+#include "Heap.h"
 #include "PathfindingGrid.h"
 #include "PathingNode.h"
 
@@ -29,6 +30,8 @@ void UPathfinding::BeginPlay()
 	{
 		UE_LOG(LogTemp, Error, TEXT("Pathfinding grid not found on \"%s\""), *GetOwner()->GetActorNameOrLabel());
 	}
+
+	GetOwner()->GetWorldTimerManager().SetTimer(DebugTimerHandle, this, &UPathfinding::DebugPathFind, 1.f, false, 1.f);
 }
 
 
@@ -39,76 +42,61 @@ void UPathfinding::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 
 	// ...
 	if (!Seeker) return;
-
 	const FPathingNode* NodeAtSeeker = PathingGridComponent->NodeFromWorldPoint(Seeker->GetActorLocation());
 	if (!NodeAtSeeker) return;
-
-	DrawDebugBox(GetWorld(), NodeAtSeeker->GetWorldPosition(), FVector(PathingGridComponent->GetNodeRadius()) * 0.9f, FColor::Cyan);
+	DrawDebugBox(GetWorld(), NodeAtSeeker->GetWorldPosition(), FVector(PathingGridComponent->GetNodeRadius()) * 0.9f,
+	             FColor::Cyan);
 
 	if (!Target) return;
-
 	const FPathingNode* NodeAtTarget = PathingGridComponent->NodeFromWorldPoint(Target->GetActorLocation());
 	if (!NodeAtTarget) return;
-
-	DrawDebugBox(GetWorld(), NodeAtTarget->GetWorldPosition(), FVector(PathingGridComponent->GetNodeRadius()) * 0.9f, FColor::Orange);
-
+	DrawDebugBox(GetWorld(), NodeAtTarget->GetWorldPosition(), FVector(PathingGridComponent->GetNodeRadius()) * 0.9f,
+	             FColor::Orange);
+	
 	FindPath(Seeker->GetActorLocation(), Target->GetActorLocation());
 }
 
 void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetPosition)
 {
 	if (!PathingGridComponent) return;
-	
+
 	FPathingNode* StartNode = PathingGridComponent->NodeFromWorldPoint(StartPosition);
 	FPathingNode* TargetNode = PathingGridComponent->NodeFromWorldPoint(TargetPosition);
-	
-	TArray<FPathingNode*> OpenSet;
-	TSet<FPathingNode*> ClosedSet;
-	
-	OpenSet.Init(StartNode, 1);
-	
-	while (OpenSet.Num() > 0)
-	{
-		FPathingNode* CurrentNode = OpenSet[0];
-		for (int32 I = 1; I < OpenSet.Num(); I++)
-		{
-			if (OpenSet[I]->GetFCost() < CurrentNode->GetFCost() ||
-				OpenSet[I]->GetFCost() == CurrentNode->GetFCost())
-			{
-				if (OpenSet[I]->HCost < CurrentNode->HCost)
-				{
-					CurrentNode = OpenSet[I];
-				}
-			}
-		}
 
-		OpenSet.Remove(CurrentNode);
+	THeap<FPathingNode> OpenSet = THeap<FPathingNode>(PathingGridComponent->GetGridSize());
+	TSet<FPathingNode*> ClosedSet;
+
+	OpenSet.Add(StartNode);
+
+	while (OpenSet.Count() > 0)
+	{	
+		FPathingNode* CurrentNode = OpenSet.RemoveFirst();
 		ClosedSet.Add(CurrentNode);
 
-		if (CurrentNode->GetGridX() == TargetNode->GetGridX() && CurrentNode->GetGridY() == TargetNode->GetGridY())
+		if (*CurrentNode == *TargetNode)
 		{
 			RetracePath(StartNode, CurrentNode);
 			return;
 		}
-		
-		for (FPathingNode* Neighbour : PathingGridComponent->GetNeighbouringNodes(CurrentNode))
+
+		TArray<FPathingNode*> Neighbours = PathingGridComponent->GetNeighbouringNodes(CurrentNode);
+		for (int32 I = 0; I < Neighbours.Num(); I++)
 		{
-			if (!Neighbour->IsWalkable() || ClosedSet.Contains(Neighbour))
+			if (!Neighbours[I]->IsWalkable() || ClosedSet.Contains(Neighbours[I]))
 			{
 				continue;
 			}
-		
-			const int32 NewMovementCostToNeighbour = CurrentNode->GCost + GetDistance(CurrentNode, Neighbour);
-			if (NewMovementCostToNeighbour < Neighbour->GCost || !OpenSet.Contains(Neighbour))
+
+			const int32 NewMovementCostToNeighbour = CurrentNode->GCost + GetDistance(CurrentNode, Neighbours[I]);
+			if (NewMovementCostToNeighbour < Neighbours[I]->GCost || !OpenSet.Contains(Neighbours[I]))
 			{
-				Neighbour->GCost = NewMovementCostToNeighbour;
-				Neighbour->HCost = GetDistance(Neighbour, TargetNode);
-				Neighbour->ParentNode = new FPathingNode();
-				*Neighbour->ParentNode = *CurrentNode;
-			
-				if (!OpenSet.Contains(Neighbour))
+				Neighbours[I]->GCost = NewMovementCostToNeighbour;
+				Neighbours[I]->HCost = GetDistance(Neighbours[I], TargetNode);
+				Neighbours[I]->ParentNode = CurrentNode;
+
+				if (!OpenSet.Contains(Neighbours[I]))
 				{
-					OpenSet.Add(Neighbour);
+					OpenSet.Add(Neighbours[I]);
 				}
 			}
 		}
@@ -129,6 +117,10 @@ int32 UPathfinding::GetDistance(const FPathingNode* NodeA, const FPathingNode* N
 	return 14 * DistX + 10 * (DistY - DistX);
 }
 
+void UPathfinding::DebugPathFind()
+{
+}
+
 void UPathfinding::RetracePath(const FPathingNode* StartNode, FPathingNode* EndNode) const
 {
 	TArray<FPathingNode*> Path;
@@ -138,7 +130,8 @@ void UPathfinding::RetracePath(const FPathingNode* StartNode, FPathingNode* EndN
 	{
 		Path.Add(CurrentNode);
 		CurrentNode = CurrentNode->ParentNode;
-		DrawDebugSphere(GetWorld(), CurrentNode->GetWorldPosition(), PathingGridComponent->GetNodeRadius(), 12, FColor::Black);		
+		DrawDebugSphere(GetWorld(), CurrentNode->GetWorldPosition(), PathingGridComponent->GetNodeRadius(), 12,
+		                FColor::Black);
 	}
 
 	Algo::Reverse(Path);

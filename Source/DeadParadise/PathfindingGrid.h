@@ -25,10 +25,10 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	float GetNodeRadius();
+	float GetNodeRadius() const;
+	int GetGridSize() const;
 	
 	FPathingNode* NodeFromWorldPoint(const FVector& WorldPosition) const;
-
 	TArray<FPathingNode*> GetNeighbouringNodes(const FPathingNode* Node);
 	
 private:
