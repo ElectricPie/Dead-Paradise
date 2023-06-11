@@ -99,11 +99,11 @@ void UPathfindingGrid::GenerateGrid()
 	// Clear the grid to prevent anything accessing it while it is being generated
 	Grid = nullptr;
 	
-	UE_LOG(LogTemp, Warning, TEXT("Generating grid sized %dx%d"), GridSizeX, GridSizeY);
-	
 	NodeDiameter = NodeRadius * 2;
 	GridSizeX = FMath::RoundToInt32(GridWorldSize.X / NodeDiameter);
 	GridSizeY = FMath::RoundToInt32(GridWorldSize.Y / NodeDiameter);
+	
+	UE_LOG(LogTemp, Warning, TEXT("Generating grid sized %dx%d"), GridSizeX, GridSizeY);
 	
 	FPathingNode* GeneratedGrid = new FPathingNode[GridSizeX*GridSizeY];
 	const FVector WorldBottomLeft = GetOwner()->GetActorLocation() - FVector::ForwardVector * GridWorldSize.X / 2 - FVector::RightVector * GridWorldSize.Y / 2;

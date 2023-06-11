@@ -2,8 +2,6 @@
 
 #pragma once
 
-#pragma UE_DISABLE_OPTIMIZATION
-
 #include "CoreMinimal.h"
 #include "Heap.h"
 #include "HeapItem.h"
