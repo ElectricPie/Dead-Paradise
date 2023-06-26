@@ -8,7 +8,7 @@
 
 class UCapsuleComponent;
 
-UCLASS()
+UCLASS(meta=(ScriptName="RtsUnit"))
 class DEADPARADISE_API AUnit : public AActor
 {
 	GENERATED_BODY()
