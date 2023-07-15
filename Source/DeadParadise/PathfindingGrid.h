@@ -3,28 +3,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "GameFramework/Actor.h"
 #include "PathfindingGrid.generated.h"
 
 class FPathingNode;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class DEADPARADISE_API UPathfindingGrid : public UActorComponent
+UCLASS()
+class DEADPARADISE_API APathfindingGrid : public AActor
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
-	UPathfindingGrid();
+public:
+	// Sets default values for this actor's properties
+	APathfindingGrid();
 
 protected:
-	// Called when the game starts
+	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
+	virtual void Tick(float DeltaTime) override;
 	float GetNodeRadius() const;
 	int GetGridSize() const;
 	

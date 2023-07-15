@@ -16,24 +16,28 @@ void FDeadParadiseEditor::StartupModule()
 	UE_LOG(DeadParadiseEditor, Display, TEXT("DeadParadiseEditor: Log Started"));
 
 	if (!GUnrealEd) return;
-	
+
+	/*
 	TSharedPtr<FPathfindingComponentVisualizer> PathfinderVisualizer = MakeShareable(new FPathfindingComponentVisualizer());
 	if (PathfinderVisualizer.IsValid()) {
-		GUnrealEd->RegisterComponentVisualizer(UPathfindingGrid::StaticClass()->GetFName(), PathfinderVisualizer);
+		GUnrealEd->RegisterComponentVisualizer(APathfindingGrid::StaticClass()->GetFName(), PathfinderVisualizer);
 			
 		UE_LOG(DeadParadiseEditor, Display, TEXT("DeadParadiseEditor: PathfindingGrid Visualizer registerd"));
 	}
 		
 	UE_LOG(DeadParadiseEditor, Error, TEXT("DeadParadiseEditor: PathfindingGrid Visualizer is Invalid"));
+	*/
 }
 
 void FDeadParadiseEditor::ShutdownModule()
 {
+	/*
 	if (!GUnrealEd) return;
 	
-	GUnrealEd->UnregisterComponentVisualizer(UPathfindingGrid::StaticClass()->GetFName());
+	GUnrealEd->UnregisterComponentVisualizer(APathfindingGrid::StaticClass()->GetFName());
 	
 	UE_LOG(DeadParadiseEditor, Display, TEXT("DeadParadiseEditor: Log Ended"));
+	*/
 }
 
 #undef LOCTEXT_NAMESPACE

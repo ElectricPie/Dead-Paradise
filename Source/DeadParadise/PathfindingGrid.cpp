@@ -5,44 +5,39 @@
 #include "PathingNode.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-// Sets default values for this component's properties
-UPathfindingGrid::UPathfindingGrid()
+// Sets default values
+APathfindingGrid::APathfindingGrid()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
 }
 
-// Called when the game starts
-void UPathfindingGrid::BeginPlay()
+// Called when the game starts or when spawned
+void APathfindingGrid::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
+	
 	GenerateGrid();
 }
 
 // Called every frame
-void UPathfindingGrid::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void APathfindingGrid::Tick(float DeltaTime)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	Super::Tick(DeltaTime);
 }
 
-float UPathfindingGrid::GetNodeRadius() const
+
+float APathfindingGrid::GetNodeRadius() const
 {
 	return NodeRadius;
 }
 
-int UPathfindingGrid::GetGridSize() const
+int APathfindingGrid::GetGridSize() const
 {
 	return GridSizeX * GridSizeY;
 }
 
-FPathingNode* UPathfindingGrid::NodeFromWorldPoint(const FVector& WorldPosition) const
+FPathingNode* APathfindingGrid::NodeFromWorldPoint(const FVector& WorldPosition) const
 {
 	if (!Grid)
 	{
@@ -63,7 +58,7 @@ FPathingNode* UPathfindingGrid::NodeFromWorldPoint(const FVector& WorldPosition)
 	return &Grid[NodeArrayX*GridSizeY+NodeArrayY];
 }
 
-TArray<FPathingNode*> UPathfindingGrid::GetNeighbouringNodes(const FPathingNode* Node)
+TArray<FPathingNode*> APathfindingGrid::GetNeighbouringNodes(const FPathingNode* Node)
 {
 	TArray<FPathingNode*> NeighbourNodes = TArray<FPathingNode*>(nullptr, 0);
 	
@@ -94,7 +89,7 @@ TArray<FPathingNode*> UPathfindingGrid::GetNeighbouringNodes(const FPathingNode*
 	return NeighbourNodes;
 }
 
-void UPathfindingGrid::GenerateGrid()
+void APathfindingGrid::GenerateGrid()
 {
 	// Clear the grid to prevent anything accessing it while it is being generated
 	Grid = nullptr;

@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Pathfinding.generated.h"
 
-class UPathfindingGrid;
+class APathfindingGrid;
 class FPathingNode;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -37,7 +37,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Test", meta = (AllowPrivateAccess = "true"))
 	AActor* Target;
 	
-	UPathfindingGrid* PathingGridComponent = nullptr;
+	APathfindingGrid* PathingGridComponent = nullptr;
 
 	FTimerHandle DebugTimerHandle;
 	void DebugPathFind();

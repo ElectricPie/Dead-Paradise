@@ -23,7 +23,7 @@ void UPathfinding::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	PathingGridComponent = GetOwner()->GetComponentByClass<UPathfindingGrid>();
+	PathingGridComponent = Cast<APathfindingGrid>(GetOwner());
 	if (!PathingGridComponent)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Pathfinding grid not found on \"%s\""), *GetOwner()->GetActorNameOrLabel());

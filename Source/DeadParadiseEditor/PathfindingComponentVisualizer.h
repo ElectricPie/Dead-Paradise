@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "ComponentVisualizer.h"
 
-class UPathfindingGrid;
+class APathfindingGrid;
 
 /**
  * 
@@ -18,6 +18,6 @@ public:
 	
 	void DrawWorldGrid(FPrimitiveDrawInterface* PDI, const FVector& Location, FVector2D Area, float NodeRadius) const;
 
-	void DrawGridNodes(FPrimitiveDrawInterface* PDI, const UPathfindingGrid* PathfindingGrid) const;
+	void DrawGridNodes(FPrimitiveDrawInterface* PDI, const APathfindingGrid* PathfindingGrid) const;
 };
  

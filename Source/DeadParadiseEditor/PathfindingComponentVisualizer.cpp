@@ -3,6 +3,25 @@
 
 #include "PathfindingComponentVisualizer.h"
 #include "DeadParadiseEditor.h"
+
+
+void FPathfindingComponentVisualizer::DrawVisualization(const UActorComponent* Component, const FSceneView* View,
+	FPrimitiveDrawInterface* PDI)
+{
+	FComponentVisualizer::DrawVisualization(Component, View, PDI);
+}
+
+void FPathfindingComponentVisualizer::DrawWorldGrid(FPrimitiveDrawInterface* PDI, const FVector& Location,
+	FVector2D Area, float NodeRadius) const
+{
+}
+
+void FPathfindingComponentVisualizer::DrawGridNodes(FPrimitiveDrawInterface* PDI,
+	const APathfindingGrid* PathfindingGrid) const
+{
+}
+
+/*
 #include "DeadParadise/PathfindingGrid.h"
 #include "DeadParadise/PathingNode.h"
 
@@ -49,3 +68,4 @@ void FPathfindingComponentVisualizer::DrawGridNodes(FPrimitiveDrawInterface* PDI
 		}
 	}
 }
+*/
