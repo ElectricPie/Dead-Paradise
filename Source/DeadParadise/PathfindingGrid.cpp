@@ -46,8 +46,8 @@ FPathingNode* APathfindingGrid::NodeFromWorldPoint(const FVector& WorldPosition)
 		return new FPathingNode();
 	}
 	
-	float PosX = (WorldPosition.X - GetOwner()->GetActorLocation().X + GridWorldSize.X * 0.5f) / NodeDiameter;
-	float PoxY = (WorldPosition.Y - GetOwner()->GetActorLocation().Y + GridWorldSize.Y * 0.5f) / NodeDiameter;
+	float PosX = (WorldPosition.X - GetActorLocation().X + GridWorldSize.X * 0.5f) / NodeDiameter;
+	float PoxY = (WorldPosition.Y - GetActorLocation().Y + GridWorldSize.Y * 0.5f) / NodeDiameter;
 	
 	PosX = FMath::Clamp(PosX, 0, GridWorldSize.X - 1);
 	PoxY = FMath::Clamp(PoxY, 0, GridWorldSize.Y - 1);
@@ -101,7 +101,7 @@ void APathfindingGrid::GenerateGrid()
 	UE_LOG(LogTemp, Warning, TEXT("Generating grid sized %dx%d"), GridSizeX, GridSizeY);
 	
 	FPathingNode* GeneratedGrid = new FPathingNode[GridSizeX*GridSizeY];
-	const FVector WorldBottomLeft = GetOwner()->GetActorLocation() - FVector::ForwardVector * GridWorldSize.X / 2 - FVector::RightVector * GridWorldSize.Y / 2;
+	const FVector WorldBottomLeft = GetActorLocation() - FVector::ForwardVector * GridWorldSize.X / 2 - FVector::RightVector * GridWorldSize.Y / 2;
 	
 	for (int32 X = 0; X < GridSizeX; X++)
 	{
