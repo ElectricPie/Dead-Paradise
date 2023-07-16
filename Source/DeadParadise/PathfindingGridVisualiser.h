@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "PathfindingGridVisualiser.generated.h"
 
+class APathfindingGrid;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class DEADPARADISE_API UPathfindingGridVisualiser : public UActorComponent
@@ -24,4 +25,10 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
+	
+private:
+	friend class FPathfindingComponentVisualizer;
+	
+	UPROPERTY()
+	APathfindingGrid* PathfindingGrid = nullptr;
 };

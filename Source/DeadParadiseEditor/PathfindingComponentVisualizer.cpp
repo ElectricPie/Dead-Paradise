@@ -2,41 +2,25 @@
 
 
 #include "PathfindingComponentVisualizer.h"
-#include "DeadParadiseEditor.h"
-
-
-void FPathfindingComponentVisualizer::DrawVisualization(const UActorComponent* Component, const FSceneView* View,
-	FPrimitiveDrawInterface* PDI)
-{
-	FComponentVisualizer::DrawVisualization(Component, View, PDI);
-}
-
-void FPathfindingComponentVisualizer::DrawWorldGrid(FPrimitiveDrawInterface* PDI, const FVector& Location,
-	FVector2D Area, float NodeRadius) const
-{
-}
-
-void FPathfindingComponentVisualizer::DrawGridNodes(FPrimitiveDrawInterface* PDI,
-	const APathfindingGrid* PathfindingGrid) const
-{
-}
-
-/*
 #include "DeadParadise/PathfindingGrid.h"
+#include "DeadParadise/PathfindingGridVisualiser.h"
 #include "DeadParadise/PathingNode.h"
+
 
 void FPathfindingComponentVisualizer::DrawVisualization(const UActorComponent* Component, const FSceneView* View,
                                                         FPrimitiveDrawInterface* PDI)
 {
-	if (const UPathfindingGrid* PathfindingGrid = Cast<UPathfindingGrid>(Component))
+	if (const UPathfindingGridVisualiser* GridVisualiser = Cast<UPathfindingGridVisualiser>(Component))
 	{
-		// Draws the box for the GridWorldSize
-		DrawWorldGrid(PDI,
-			PathfindingGrid->GetOwner()->GetActorLocation(),
-			PathfindingGrid->GridWorldSize,
-			PathfindingGrid->NodeRadius * 2);
+		if (const APathfindingGrid* PathfindingGrid = GridVisualiser->PathfindingGrid) {
+			// Draws the box for the GridWorldSize
+			DrawWorldGrid(PDI,
+				PathfindingGrid->GetActorLocation(),
+				PathfindingGrid->GridWorldSize,
+				PathfindingGrid->NodeRadius * 2);
 
-		DrawGridNodes(PDI, PathfindingGrid);
+			DrawGridNodes(PDI, PathfindingGrid);
+		}
 	}
 }
 
@@ -49,7 +33,8 @@ void FPathfindingComponentVisualizer::DrawWorldGrid(FPrimitiveDrawInterface* PDI
 	DrawWireBox(PDI, GridArea, FLinearColor::Red, SDPG_Foreground);
 }
 
-void FPathfindingComponentVisualizer::DrawGridNodes(FPrimitiveDrawInterface* PDI, const UPathfindingGrid* PathfindingGrid) const
+
+void FPathfindingComponentVisualizer::DrawGridNodes(FPrimitiveDrawInterface* PDI, const APathfindingGrid* PathfindingGrid) const
 {
 	if (PathfindingGrid->Grid != nullptr)
 	{
@@ -68,4 +53,3 @@ void FPathfindingComponentVisualizer::DrawGridNodes(FPrimitiveDrawInterface* PDI
 		}
 	}
 }
-*/

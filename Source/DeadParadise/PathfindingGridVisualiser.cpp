@@ -3,6 +3,8 @@
 
 #include "PathfindingGridVisualiser.h"
 
+#include "PathfindingGrid.h"
+
 
 // Sets default values for this component's properties
 UPathfindingGridVisualiser::UPathfindingGridVisualiser()
@@ -12,6 +14,7 @@ UPathfindingGridVisualiser::UPathfindingGridVisualiser()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+	PathfindingGrid = Cast<APathfindingGrid>(GetOwner());
 }
 
 
