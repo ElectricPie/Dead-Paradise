@@ -29,7 +29,8 @@ private:
     UPROPERTY(VisibleDefaultsOnly, Category = "Components")
 	UCapsuleComponent* CapsuleComponent;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleDefaultsOnly, Category = "Components", meta=(AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* MeshComponent;
+
 
 };

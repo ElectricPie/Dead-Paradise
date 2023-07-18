@@ -5,6 +5,7 @@
 #include "Heap.h"
 #include "PathfindingGrid.h"
 #include "PathingNode.h"
+#include "PathRequestSubsystem.h"
 
 // Sets default values for this component's properties
 UPathfinding::UPathfinding()
@@ -29,6 +30,9 @@ void UPathfinding::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("Pathfinding grid not found on \"%s\""), *GetOwner()->GetActorNameOrLabel());
 	}
 
+	PathRequestSubsystem = GetWorld()->GetSubsystem<UPathRequestSubsystem>();
+	PathRequestSubsystem->SetPathfinding(this);
+
 	GetOwner()->GetWorldTimerManager().SetTimer(DebugTimerHandle, this, &UPathfinding::DebugPathFind, 1.f, false, 1.f);
 }
 
@@ -39,6 +43,7 @@ void UPathfinding::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+	/*
 	if (!Seeker) return;
 	const FPathingNode* NodeAtSeeker = PathingGridComponent->NodeFromWorldPoint(Seeker->GetActorLocation());
 	if (!NodeAtSeeker) return;
@@ -52,15 +57,30 @@ void UPathfinding::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 	             FColor::Orange);
 	
 	FindPath(Seeker->GetActorLocation(), Target->GetActorLocation());
+	*/
+}
+
+void UPathfinding::StartFindPath(const FVector& StartPosition, const FVector& TargetPosition)
+{
+	// TODO: Call as coroutine
+	FindPath(StartPosition, TargetPosition);
 }
 
 void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetPosition)
 {
 	if (!PathingGridComponent) return;
 
+	TArray<const FVector*> Waypoints;
+	bool bPathSuccess = false;
+	
 	FPathingNode* StartNode = PathingGridComponent->NodeFromWorldPoint(StartPosition);
 	FPathingNode* TargetNode = PathingGridComponent->NodeFromWorldPoint(TargetPosition);
 
+	if (!StartNode->IsWalkable() || !TargetNode->IsWalkable())
+	{
+		return;
+	}
+	
 	THeap<FPathingNode> OpenSet = THeap<FPathingNode>(PathingGridComponent->GetGridSize());
 	TSet<FPathingNode*> ClosedSet;
 
@@ -73,8 +93,8 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 
 		if (*CurrentNode == *TargetNode)
 		{
-			RetracePath(StartNode, CurrentNode);
-			return;
+			bPathSuccess = true;
+			break;
 		}
 
 		TArray<FPathingNode*> Neighbours = PathingGridComponent->GetNeighbouringNodes(CurrentNode);
@@ -98,7 +118,15 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 				}
 			}
 		}
+		
 	}
+	
+	// TODO: Yield return null (wait 1 frame)
+	if (bPathSuccess)
+	{
+		Waypoints = RetracePath(StartNode, TargetNode);
+	}
+	PathRequestSubsystem->FinishedProcessingNext(Waypoints, bPathSuccess);
 }
 
 
@@ -119,7 +147,7 @@ void UPathfinding::DebugPathFind()
 {
 }
 
-void UPathfinding::RetracePath(const FPathingNode* StartNode, FPathingNode* EndNode) const
+TArray<const FVector*> UPathfinding::RetracePath(const FPathingNode* StartNode, FPathingNode* EndNode) const
 {
 	TArray<FPathingNode*> Path;
 	FPathingNode* CurrentNode = EndNode;
@@ -129,8 +157,33 @@ void UPathfinding::RetracePath(const FPathingNode* StartNode, FPathingNode* EndN
 		Path.Add(CurrentNode);
 		CurrentNode = CurrentNode->ParentNode;
 		DrawDebugSphere(GetWorld(), CurrentNode->GetWorldPosition(), PathingGridComponent->GetNodeRadius(), 12,
-		                FColor::Black);
+		                FColor::Black, false, 10.f);
 	}
 
-	Algo::Reverse(Path);
+	TArray<const FVector*> Waypoints = SimplifyPath(Path);
+	Algo::Reverse(Waypoints);
+	return Waypoints;
 }
+
+TArray<const FVector*> UPathfinding::SimplifyPath(TArray<FPathingNode*> Path) const
+{
+	TArray<const FVector*> Waypoints;
+	FVector2d* DirectionOld = new FVector2d(0.f);
+
+	TArray<FVector> Test;
+	
+	for (int32 i = 1; i < Path.Num(); i++)
+	{
+		FVector2d* DirectionNew = new FVector2d(Path[i-1]->GetGridX() - Path[i]->GetGridX(),Path[i-1]->GetGridY() - Path[i]->GetGridY());
+		if (DirectionNew != DirectionOld)
+		{
+			FVector NewWaypoint = Path[i]->GetWorldPosition();
+			Waypoints.Add(&NewWaypoint);
+			Test.Add(NewWaypoint);
+			DirectionOld = DirectionNew;
+		}
+	}
+
+	return Waypoints;
+}
+
