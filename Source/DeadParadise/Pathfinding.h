@@ -27,10 +27,12 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	/**
+	 * @brief Finds a path between the given world positions
+	 * @param StartPosition The start of the path
+	 * @param TargetPosition The end point of the path
+	 */
 	void StartFindPath(const FVector& StartPosition, const FVector& TargetPosition);
-	void FindPath(const FVector& StartPosition, const FVector& TargetPosition);
-
-	int32 GetDistance(const FPathingNode* NodeA, const FPathingNode* NodeB);
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Test", meta = (AllowPrivateAccess = "true"))
@@ -44,7 +46,9 @@ private:
 	UPROPERTY()
 	UPathRequestSubsystem* PathRequestSubsystem;
 
-	TArray<const FVector*> RetracePath(const FPathingNode* StartNode, FPathingNode* EndNode) const;
-
-	TArray<const FVector*> SimplifyPath(TArray<FPathingNode*> Path) const;
+	void FindPath(const FVector& StartPosition, const FVector& TargetPosition);
+	TArray<const FVector*> RetracePath(const FPathingNode& StartNode, const FPathingNode& EndNode) const;
+	
+	static int32 GetDistance(const FPathingNode& NodeA, const FPathingNode& NodeB);
+	static TArray<const FVector*> SimplifyPath(const TArray<const FPathingNode*>& Path);
 };

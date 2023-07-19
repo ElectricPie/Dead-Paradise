@@ -94,11 +94,11 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 				continue;
 			}
 
-			const int32 NewMovementCostToNeighbour = CurrentNode->GCost + GetDistance(CurrentNode, Neighbours[I]);
+			const int32 NewMovementCostToNeighbour = CurrentNode->GCost + GetDistance(*CurrentNode, *Neighbours[I]);
 			if (NewMovementCostToNeighbour < Neighbours[I]->GCost || !OpenSet.Contains(Neighbours[I]))
 			{
 				Neighbours[I]->GCost = NewMovementCostToNeighbour;
-				Neighbours[I]->HCost = GetDistance(Neighbours[I], TargetNode);
+				Neighbours[I]->HCost = GetDistance(*Neighbours[I], *TargetNode);
 				Neighbours[I]->ParentNode = CurrentNode;
 
 				if (!OpenSet.Contains(Neighbours[I]))
@@ -112,32 +112,17 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 	// TODO: Yield return null (wait 1 frame)
 	if (bPathSuccess)
 	{
-		Waypoints = RetracePath(StartNode, TargetNode);
+		Waypoints = RetracePath(*StartNode, *TargetNode);
 	}
 	PathRequestSubsystem->FinishedProcessingNext(Waypoints, bPathSuccess);
 }
 
-
-int32 UPathfinding::GetDistance(const FPathingNode* NodeA, const FPathingNode* NodeB)
+TArray<const FVector*> UPathfinding::RetracePath(const FPathingNode& StartNode, const FPathingNode& EndNode) const
 {
-	const int32 DistX = FMath::Abs(NodeA->GetGridX() - NodeB->GetGridX());
-	const int32 DistY = FMath::Abs(NodeA->GetGridY() - NodeB->GetGridY());
+	TArray<const FPathingNode*> Path;
+	const FPathingNode* CurrentNode = &EndNode;
 
-	if (DistX > DistY)
-	{
-		return 14 * DistY + 10 * (DistX - DistY);
-	}
-
-	return 14 * DistX + 10 * (DistY - DistX);
-}
-
-
-TArray<const FVector*> UPathfinding::RetracePath(const FPathingNode* StartNode, FPathingNode* EndNode) const
-{
-	TArray<FPathingNode*> Path;
-	FPathingNode* CurrentNode = EndNode;
-
-	while (CurrentNode->GetGridX() != StartNode->GetGridX() || CurrentNode->GetGridY() != StartNode->GetGridY())
+	while (CurrentNode->GetGridX() != StartNode.GetGridX() || CurrentNode->GetGridY() != StartNode.GetGridY())
 	{
 		Path.Add(CurrentNode);
 		CurrentNode = CurrentNode->ParentNode;
@@ -148,7 +133,20 @@ TArray<const FVector*> UPathfinding::RetracePath(const FPathingNode* StartNode, 
 	return Waypoints;
 }
 
-TArray<const FVector*> UPathfinding::SimplifyPath(TArray<FPathingNode*> Path) const
+int32 UPathfinding::GetDistance(const FPathingNode& NodeA, const FPathingNode& NodeB)
+{
+	const int32 DistX = FMath::Abs(NodeA.GetGridX() - NodeB.GetGridX());
+	const int32 DistY = FMath::Abs(NodeA.GetGridY() - NodeB.GetGridY());
+
+	if (DistX > DistY)
+	{
+		return 14 * DistY + 10 * (DistX - DistY);
+	}
+
+	return 14 * DistX + 10 * (DistY - DistX);
+}
+
+TArray<const FVector*> UPathfinding::SimplifyPath(const TArray<const FPathingNode*>& Path)
 {
 	TArray<const FVector*> Waypoints;
 	FVector2d* DirectionOld = new FVector2d(0.f);
