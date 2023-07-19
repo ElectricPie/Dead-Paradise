@@ -27,7 +27,7 @@ public:
 	float GetNodeRadius() const;
 	int GetGridSize() const;
 	
-	bool NodeFromWorldPoint(const FVector& WorldPosition, FPathingNode* OutNode) const;
+	bool NodeFromWorldPoint(const FVector& WorldPosition, FPathingNode*& OutNode) const;
 	TArray<FPathingNode*> GetNeighbouringNodes(const FPathingNode* Node);
 	
 private:

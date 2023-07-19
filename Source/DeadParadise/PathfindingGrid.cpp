@@ -37,7 +37,7 @@ int APathfindingGrid::GetGridSize() const
 	return GridSizeX * GridSizeY;
 }
 
-bool APathfindingGrid::NodeFromWorldPoint(const FVector& WorldPosition, OUT FPathingNode* OutNode) const
+bool APathfindingGrid::NodeFromWorldPoint(const FVector& WorldPosition, OUT FPathingNode*& OutNode) const
 {
 	if (Grid.IsEmpty())
 	{

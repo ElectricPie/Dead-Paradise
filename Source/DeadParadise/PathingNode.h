@@ -20,7 +20,7 @@ public:
 	FPathingNode* ParentNode = nullptr;
 
 	bool IsWalkable() const;
-	FVector GetWorldPosition() const;
+	const FVector& GetWorldPosition() const;
 	int32 GetGridX() const;
 	int32 GetGridY() const;
 

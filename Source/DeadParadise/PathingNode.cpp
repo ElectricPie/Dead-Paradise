@@ -21,7 +21,7 @@ bool FPathingNode::operator==(const FPathingNode& OtherNode) const
 	return GridX == OtherNode.GridX && GridY == OtherNode.GridY && WorldPosition == OtherNode.WorldPosition;
 }
 
-FVector FPathingNode::GetWorldPosition() const
+const FVector& FPathingNode::GetWorldPosition() const
 {
 	return WorldPosition;
 }

@@ -58,9 +58,9 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 
 	FPathingNode* StartNode = nullptr;
 	FPathingNode* TargetNode = nullptr;
-	
-	if (PathingGridComponent->NodeFromWorldPoint(StartPosition, StartNode) ||
-		PathingGridComponent->NodeFromWorldPoint(TargetPosition, TargetNode))
+
+	if (!PathingGridComponent->NodeFromWorldPoint(StartPosition, StartNode) ||
+		!PathingGridComponent->NodeFromWorldPoint(TargetPosition, TargetNode))
 	{
 		return;
 	}
@@ -102,7 +102,6 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 				}
 			}
 		}
-		
 	}
 	
 	// TODO: Yield return null (wait 1 frame)
