@@ -15,7 +15,6 @@ void UPathRequestSubsystem::RequestPath(const FVector& PathStart, const FVector&
 		return;
 	}
 	
-	UE_LOG(LogTemp, Warning, TEXT("Boop"));
 	FPathRequest* NewRequest = new FPathRequest(PathStart, PathEnd, Callback);
 	PathRequestQueue.Enqueue(NewRequest);
 
@@ -24,7 +23,6 @@ void UPathRequestSubsystem::RequestPath(const FVector& PathStart, const FVector&
 
 void UPathRequestSubsystem::FinishedProcessingNext(TArray<const FVector*> Path, bool bWasSuccessful)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Finished Processing"));
 	CurrentPathRequest->Callback.Execute(Path, bWasSuccessful);
 	bIsProcessingPath = false;
 	TryProcessNext();
@@ -52,7 +50,6 @@ void UPathRequestSubsystem::TryProcessNext()
 {
 	if (!bIsProcessingPath && !PathRequestQueue.IsEmpty())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Processing Next"));
 		PathRequestQueue.Dequeue(CurrentPathRequest);
 		bIsProcessingPath = true;
 		Pathfinding->StartFindPath(CurrentPathRequest->PathStart, CurrentPathRequest->PathEnd);

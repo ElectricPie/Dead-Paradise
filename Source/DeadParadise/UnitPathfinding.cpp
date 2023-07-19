@@ -25,7 +25,7 @@ void UUnitPathfinding::BeginPlay()
 	PathRequest = GetWorld()->GetSubsystem<UPathRequestSubsystem>();
 
 	FTimerHandle DebugTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(DebugTimerHandle, this, &UUnitPathfinding::DebugPathfinding, 2, false);
+	GetWorld()->GetTimerManager().SetTimer(DebugTimerHandle, this, &UUnitPathfinding::DebugPathfinding, 0.5f, false);
 }
 
 
@@ -45,8 +45,6 @@ void UUnitPathfinding::OnPathFound(TArray<const FVector*> NewPath, bool bPathWas
 
 	for (int32 i = 0; i < Path.Num(); i ++)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Waypoint %d: %s"), i, *NewPath[i]->ToString());
-		
 		DrawDebugSphere(GetWorld(), *NewPath[i], 50.f, 12,
 						FColor::Red, false, 10.f);
 	}

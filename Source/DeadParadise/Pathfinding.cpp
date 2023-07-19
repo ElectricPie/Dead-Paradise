@@ -136,8 +136,6 @@ TArray<const FVector*> UPathfinding::RetracePath(const FPathingNode* StartNode, 
 	{
 		Path.Add(CurrentNode);
 		CurrentNode = CurrentNode->ParentNode;
-		DrawDebugSphere(GetWorld(), CurrentNode->GetWorldPosition(), PathingGridComponent->GetNodeRadius(), 12,
-		                FColor::Black, false, 10.f);
 	}
 
 	TArray<const FVector*> Waypoints = SimplifyPath(Path);
@@ -149,19 +147,16 @@ TArray<const FVector*> UPathfinding::SimplifyPath(TArray<FPathingNode*> Path) co
 {
 	TArray<const FVector*> Waypoints;
 	FVector2d* DirectionOld = new FVector2d(0.f);
-
-	TArray<FVector> Test;
 	
 	for (int32 i = 1; i < Path.Num(); i++)
 	{
 		FVector2d* DirectionNew = new FVector2d(Path[i-1]->GetGridX() - Path[i]->GetGridX(),Path[i-1]->GetGridY() - Path[i]->GetGridY());
-		if (DirectionNew != DirectionOld)
+		if (*DirectionNew != *DirectionOld)
 		{
-			FVector NewWaypoint = Path[i]->GetWorldPosition();
-			Waypoints.Add(&NewWaypoint);
-			Test.Add(NewWaypoint);
-			DirectionOld = DirectionNew;
+			const FVector* NewWaypoint = new FVector(Path[i-1]->GetWorldPosition().X, Path[i-1]->GetWorldPosition().Y, Path[i]->GetWorldPosition().Z);
+			Waypoints.Add(NewWaypoint);
 		}
+		DirectionOld = DirectionNew;
 	}
 
 	return Waypoints;
