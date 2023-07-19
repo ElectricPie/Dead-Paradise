@@ -18,6 +18,6 @@ public:
 	
 	void DrawWorldGrid(FPrimitiveDrawInterface* PDI, const FVector& Location, FVector2D Area, float NodeRadius) const;
 
-	void DrawGridNodes(FPrimitiveDrawInterface* PDI, const APathfindingGrid* PathfindingGrid) const;
+	void DrawGridNodes(FPrimitiveDrawInterface* PDI, const APathfindingGrid& PathfindingGrid) const;
 };
  
