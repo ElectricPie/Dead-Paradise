@@ -81,7 +81,12 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 			break;
 		}
 
-		TArray<FPathingNode*> Neighbours = PathingGridComponent->GetNeighbouringNodes(CurrentNode);
+		TArray<FPathingNode*> Neighbours;
+		if (!PathingGridComponent->GetNeighbouringNodes(*CurrentNode, Neighbours))
+		{
+			return;
+		}
+		
 		for (int32 I = 0; I < Neighbours.Num(); I++)
 		{
 			if (!Neighbours[I]->IsWalkable() || ClosedSet.Contains(Neighbours[I]))

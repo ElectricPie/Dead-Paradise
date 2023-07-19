@@ -59,13 +59,11 @@ bool APathfindingGrid::NodeFromWorldPoint(const FVector& WorldPosition, OUT FPat
 	return true;
 }
 
-TArray<FPathingNode*> APathfindingGrid::GetNeighbouringNodes(const FPathingNode* Node)
+bool APathfindingGrid::GetNeighbouringNodes(const FPathingNode& Node, OUT TArray<FPathingNode*>& OutNeighboringNodes)
 {
-	TArray<FPathingNode*> NeighbourNodes = TArray<FPathingNode*>(nullptr, 0);
-	
 	if (Grid.IsEmpty())
 	{
-		return NeighbourNodes;
+		return false;
 	}
 	
 	for (int32 X = -1; X <= 1; X++)
@@ -77,17 +75,17 @@ TArray<FPathingNode*> APathfindingGrid::GetNeighbouringNodes(const FPathingNode*
 				continue;
 			}
 
-			const int32 CheckX = Node->GetGridX() + X;
-			const int32 CheckY = Node->GetGridY() + Y;
+			const int32 CheckX = Node.GetGridX() + X;
+			const int32 CheckY = Node.GetGridY() + Y;
 			
 			if (CheckX >= 0 && CheckX < GridSizeX && CheckY >= 0 && CheckY < GridSizeY)
 			{
-				NeighbourNodes.Add(Grid[CheckX*GridSizeY+CheckY]);
+				OutNeighboringNodes.Add(Grid[CheckX*GridSizeY+CheckY]);
 			}
 		}
 	}
 
-	return NeighbourNodes;
+	return true;
 }
 
 void APathfindingGrid::GenerateGrid()

@@ -28,7 +28,8 @@ public:
 	int GetGridSize() const;
 	
 	bool NodeFromWorldPoint(const FVector& WorldPosition, FPathingNode*& OutNode) const;
-	TArray<FPathingNode*> GetNeighbouringNodes(const FPathingNode* Node);
+	 * @brief Attempts to get the 
+	bool GetNeighbouringNodes(const FPathingNode& Node, OUT TArray<FPathingNode*>& OutNeighboringNodes);
 	
 private:
 	friend class FPathfindingComponentVisualizer;
