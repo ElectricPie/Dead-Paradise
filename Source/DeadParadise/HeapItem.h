@@ -14,5 +14,5 @@ public:
 	virtual ~THeapItem() = default;
 	int32 HeapIndex = -1;
 
-	virtual int32 CompareTo(const T* ItemToCompare) = 0;
+	virtual int32 CompareTo(const T& ItemToCompare) = 0;
 };

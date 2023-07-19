@@ -98,7 +98,7 @@ void THeap<T>::SortUp(T* Item)
 	while (true)
 	{
 		T* ParentItem = Items[ParentIndex];
-		int32 CompareValue = Item->CompareTo(ParentItem);
+		int32 CompareValue = Item->CompareTo(*ParentItem);
 		if (CompareValue > 0)
 		{
 			SwapEl(Item, ParentItem);
@@ -138,13 +138,13 @@ void THeap<T>::SortDown(T* Item)
 
 			if (ChildIndexRight < CurrentItemCount)
 			{
-				if (Items[ChildIndexLeft]->CompareTo(Items[ChildIndexRight]) < 0)
+				if (Items[ChildIndexLeft]->CompareTo(*Items[ChildIndexRight]) < 0)
 				{
 					SwapIndex = ChildIndexRight;
 				}
 			}
 
-			if (Item->CompareTo(Items[SwapIndex]) < 0)
+			if (Item->CompareTo(*Items[SwapIndex]) < 0)
 			{
 				SwapEl(Item, Items[SwapIndex]);
 			}

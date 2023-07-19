@@ -23,11 +23,17 @@ public:
 	const FVector& GetWorldPosition() const;
 	int32 GetGridX() const;
 	int32 GetGridY() const;
-
 	int32 GetFCost() const;
 
 	using THeapItem::CompareTo;
-	virtual int32 CompareTo(const FPathingNode* NodeToCompare) override;
+	/**
+	 * @brief Compares the FCosts of the Node with another provided node, if the FCosts match then the it will compare
+	 * the HCost of the Nodes
+	 * @param NodeToCompare Another node to compare
+	 * @return -1 if the provided node has a higher cost, 0 if they are the same, 1 if the provided node has a higher
+	 * cost
+	 */
+	virtual int32 CompareTo(const FPathingNode& NodeToCompare) override;
 
 private:
 	bool bIsWalkable;
