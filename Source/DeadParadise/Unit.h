@@ -24,6 +24,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void MoveToPoint(const FVector& TargetPoint, float Duration);
 	
 private:
     UPROPERTY(VisibleDefaultsOnly, Category = "Components")
@@ -32,5 +34,8 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Components", meta=(AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* MeshComponent;
 
-
+	FTimerHandle MoveTimerHandle;
+	
+	UFUNCTION()
+	void LerpToPoint(FVector& StartLocation, FVector& EndLocation, float StartTime, float EndTime);
 };

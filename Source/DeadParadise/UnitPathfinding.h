@@ -7,6 +7,7 @@
 #include "UnitPathfinding.generated.h"
 
 
+class AUnit;
 class UPathRequestSubsystem;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -19,8 +20,12 @@ public:
 	UUnitPathfinding();
 
 protected:
+	// Called at level setup
+	virtual void InitializeComponent() override;
+	
 	// Called when the game starts
 	virtual void BeginPlay() override;
+
 
 public:	
 	// Called every frame
@@ -28,11 +33,13 @@ public:
 
 private:
 	UPROPERTY()
+	AUnit* Unit;
+	UPROPERTY()
 	UPathRequestSubsystem* PathRequest = nullptr;
 
 	UPROPERTY(EditInstanceOnly, Category = "Debug", meta=(AllowPrivateAccess = "true"))
 	AActor* Target;
-	
+
 	TArray<const FVector*> Path;
 
 	void OnPathFound(TArray<const FVector*> NewPath, bool bPathWasFound);

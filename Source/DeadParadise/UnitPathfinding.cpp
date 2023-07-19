@@ -2,8 +2,8 @@
 
 
 #include "UnitPathfinding.h"
-
 #include "PathRequestSubsystem.h"
+#include "Unit.h"
 
 // Sets default values for this component's properties
 UUnitPathfinding::UUnitPathfinding()
@@ -11,8 +11,19 @@ UUnitPathfinding::UUnitPathfinding()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+	bWantsInitializeComponent = true;
 
 	// ...
+}
+
+void UUnitPathfinding::InitializeComponent()
+{
+	Super::InitializeComponent();
+	Unit = Cast<AUnit>(GetOwner());
+	if (!Unit)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UnitPathfinding component not on an Unit : On %s"), *GetOwner()->GetActorNameOrLabel());
+	}
 }
 
 
@@ -24,6 +35,8 @@ void UUnitPathfinding::BeginPlay()
 	// ...
 	PathRequest = GetWorld()->GetSubsystem<UPathRequestSubsystem>();
 
+	// TODO: Remove debug
+	if (!Unit) return;
 	FTimerHandle DebugTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(DebugTimerHandle, this, &UUnitPathfinding::DebugPathfinding, 0.5f, false);
 }
@@ -39,7 +52,7 @@ void UUnitPathfinding::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UUnitPathfinding::OnPathFound(TArray<const FVector*> NewPath, bool bPathWasFound)
 {
-	if (!bPathWasFound) return;
+	if (!bPathWasFound || !Unit) return;
 	
 	Path = NewPath;
 
@@ -48,7 +61,8 @@ void UUnitPathfinding::OnPathFound(TArray<const FVector*> NewPath, bool bPathWas
 		DrawDebugSphere(GetWorld(), *NewPath[i], 50.f, 12,
 						FColor::Red, false, 10.f);
 	}
-	// Use timer
+
+	Unit->MoveToPoint(*Path[0], 2.f);
 }
 
 // TODO: Handled movement in the Unit
