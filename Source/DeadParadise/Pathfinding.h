@@ -44,9 +44,6 @@ private:
 	UPROPERTY()
 	UPathRequestSubsystem* PathRequestSubsystem;
 
-	FTimerHandle DebugTimerHandle;
-	void DebugPathFind();
-
 	TArray<const FVector*> RetracePath(const FPathingNode* StartNode, FPathingNode* EndNode) const;
 
 	TArray<const FVector*> SimplifyPath(TArray<FPathingNode*> Path) const;

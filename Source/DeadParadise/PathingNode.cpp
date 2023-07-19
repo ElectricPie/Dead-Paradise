@@ -3,12 +3,11 @@
 
 #include "PathingNode.h"
 
-FPathingNode::FPathingNode()
+FPathingNode::FPathingNode(const bool IsWalkable, const FVector& NodeWorldPosition, const int32 NodeGridX, const int32 NodeGridY) : WorldPosition(NodeWorldPosition)
 {
-	bIsWalkable = false;
-	WorldPosition = FVector::Zero();
-	GridX = -1;
-	GridY = -1;
+	bIsWalkable = IsWalkable;
+	GridX = NodeGridX;
+	GridY = NodeGridY;
 	GCost = -1;
 	HCost = -1;
 }
@@ -20,14 +19,6 @@ FPathingNode::~FPathingNode()
 bool FPathingNode::operator==(const FPathingNode& OtherNode) const
 {
 	return GridX == OtherNode.GridX && GridY == OtherNode.GridY && WorldPosition == OtherNode.WorldPosition;
-}
-
-void FPathingNode::SetupNode(const bool IsWalkable, const FVector& NodeWorldPosition, const int32 NodeGridX, const int32 NodeGridY)
-{
-	bIsWalkable = IsWalkable;
-	WorldPosition = NodeWorldPosition;
-	GridX = NodeGridX;
-	GridY = NodeGridY;
 }
 
 FVector FPathingNode::GetWorldPosition() const

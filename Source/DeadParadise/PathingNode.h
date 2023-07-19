@@ -11,15 +11,13 @@
 class DEADPARADISE_API FPathingNode : public THeapItem<FPathingNode>
 {
 public:
-	FPathingNode();
+	FPathingNode(const bool IsWalkable, const FVector& NodeWorldPosition, const int32 NodeGridX, const int32 NodeGridY);
 	virtual ~FPathingNode() override;
 	bool operator==(const FPathingNode& OtherNode) const;
 
 	int32 GCost;
 	int32 HCost;
 	FPathingNode* ParentNode = nullptr;
-
-	void SetupNode(bool IsWalkable, const FVector& NodeWorldPosition, int32 NodeGridX, int32 NodeGridY);
 
 	bool IsWalkable() const;
 	FVector GetWorldPosition() const;
@@ -33,7 +31,7 @@ public:
 
 private:
 	bool bIsWalkable;
-	FVector WorldPosition;
+	const FVector& WorldPosition;
 	int32 GridX;
 	int32 GridY;
 };

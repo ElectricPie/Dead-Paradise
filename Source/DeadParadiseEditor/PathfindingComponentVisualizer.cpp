@@ -2,6 +2,8 @@
 
 
 #include "PathfindingComponentVisualizer.h"
+
+#include "DeadParadiseEditor.h"
 #include "DeadParadise/PathfindingGrid.h"
 #include "DeadParadise/PathfindingGridVisualiser.h"
 #include "DeadParadise/PathingNode.h"
@@ -36,20 +38,19 @@ void FPathfindingComponentVisualizer::DrawWorldGrid(FPrimitiveDrawInterface* PDI
 
 void FPathfindingComponentVisualizer::DrawGridNodes(FPrimitiveDrawInterface* PDI, const APathfindingGrid* PathfindingGrid) const
 {
-	if (PathfindingGrid->Grid != nullptr)
+	if (PathfindingGrid->Grid.IsEmpty()) return;
+
+	for (int X = 0; X < PathfindingGrid->GridSizeX; X++)
 	{
-		for (int X = 0; X < PathfindingGrid->GridSizeX; X++)
+		for (int Y = 0; Y < PathfindingGrid->GridSizeY; Y++)
 		{
-			for (int Y = 0; Y < PathfindingGrid->GridSizeY; Y++)
-			{
-				// Draws the box for each node
-				const FPathingNode* Grid = PathfindingGrid->Grid;
-				FLinearColor WalkableColor = Grid[X*PathfindingGrid->GridSizeY+Y].IsWalkable() ? FLinearColor::Green : FLinearColor::Red;
-				const FVector NodeSize = FVector(PathfindingGrid->NodeRadius) * 0.9f;
-				const FBox NodeBox = FBox::BuildAABB(Grid[X*PathfindingGrid->GridSizeY+Y].GetWorldPosition(), NodeSize * 0.9f);
+			// Draws the box for each node
+			const TArray<FPathingNode*> Grid = PathfindingGrid->Grid;
+			FLinearColor WalkableColor = Grid[X*PathfindingGrid->GridSizeY+Y]->IsWalkable() ? FLinearColor::Green : FLinearColor::Red;
+			const FVector NodeSize = FVector(PathfindingGrid->NodeRadius) * 0.9f;
+			const FBox NodeBox = FBox::BuildAABB(Grid[X*PathfindingGrid->GridSizeY+Y]->GetWorldPosition(), NodeSize * 0.9f);
 					
-				DrawWireBox(PDI, NodeBox, WalkableColor, SDPG_World);
-			}
+			DrawWireBox(PDI, NodeBox, WalkableColor, SDPG_World);
 		}
 	}
 }

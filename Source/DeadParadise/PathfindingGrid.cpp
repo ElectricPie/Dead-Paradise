@@ -37,13 +37,13 @@ int APathfindingGrid::GetGridSize() const
 	return GridSizeX * GridSizeY;
 }
 
-FPathingNode* APathfindingGrid::NodeFromWorldPoint(const FVector& WorldPosition) const
+bool APathfindingGrid::NodeFromWorldPoint(const FVector& WorldPosition, OUT FPathingNode* OutNode) const
 {
-	if (!Grid)
+	if (Grid.IsEmpty())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("NFWP returning null"));
 	
-		return new FPathingNode();
+		return false;
 	}
 	
 	float PosX = (WorldPosition.X - GetActorLocation().X + GridWorldSize.X * 0.5f) / NodeDiameter;
@@ -55,14 +55,15 @@ FPathingNode* APathfindingGrid::NodeFromWorldPoint(const FVector& WorldPosition)
 	const int32 NodeArrayX = FMath::FloorToInt32(PosX);
 	const int32 NodeArrayY = FMath::FloorToInt32(PoxY);
 
-	return &Grid[NodeArrayX*GridSizeY+NodeArrayY];
+	OutNode = Grid[NodeArrayX*GridSizeY+NodeArrayY];
+	return true;
 }
 
 TArray<FPathingNode*> APathfindingGrid::GetNeighbouringNodes(const FPathingNode* Node)
 {
 	TArray<FPathingNode*> NeighbourNodes = TArray<FPathingNode*>(nullptr, 0);
 	
-	if (!Grid)
+	if (Grid.IsEmpty())
 	{
 		return NeighbourNodes;
 	}
@@ -81,7 +82,7 @@ TArray<FPathingNode*> APathfindingGrid::GetNeighbouringNodes(const FPathingNode*
 			
 			if (CheckX >= 0 && CheckX < GridSizeX && CheckY >= 0 && CheckY < GridSizeY)
 			{
-				NeighbourNodes.Add(&Grid[CheckX*GridSizeY+CheckY]);
+				NeighbourNodes.Add(Grid[CheckX*GridSizeY+CheckY]);
 			}
 		}
 	}
@@ -92,7 +93,7 @@ TArray<FPathingNode*> APathfindingGrid::GetNeighbouringNodes(const FPathingNode*
 void APathfindingGrid::GenerateGrid()
 {
 	// Clear the grid to prevent anything accessing it while it is being generated
-	Grid = nullptr;
+	Grid.Empty();
 	
 	NodeDiameter = NodeRadius * 2;
 	GridSizeX = FMath::RoundToInt32(GridWorldSize.X / NodeDiameter);
@@ -100,7 +101,7 @@ void APathfindingGrid::GenerateGrid()
 	
 	UE_LOG(LogTemp, Warning, TEXT("Generating grid sized %dx%d"), GridSizeX, GridSizeY);
 	
-	FPathingNode* GeneratedGrid = new FPathingNode[GridSizeX*GridSizeY];
+	TArray<FPathingNode*> GeneratedGrid;
 	const FVector WorldBottomLeft = GetActorLocation() - FVector::ForwardVector * GridWorldSize.X / 2 - FVector::RightVector * GridWorldSize.Y / 2;
 	
 	for (int32 X = 0; X < GridSizeX; X++)
@@ -128,7 +129,9 @@ void APathfindingGrid::GenerateGrid()
 				}
 			}
 			
-			GeneratedGrid[X*GridSizeY+Y].SetupNode(bIsWalkable, WorldPoint, X, Y);
+			const FVector* NodeWorldPosition = new FVector(WorldPoint.X, WorldPoint.Y, WorldPoint.Z);
+			FPathingNode* NewNode = new FPathingNode(bIsWalkable, *NodeWorldPosition, X, Y);
+			GeneratedGrid.Add(NewNode);
 		}
 	}
 

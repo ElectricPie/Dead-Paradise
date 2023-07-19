@@ -27,7 +27,7 @@ public:
 	float GetNodeRadius() const;
 	int GetGridSize() const;
 	
-	FPathingNode* NodeFromWorldPoint(const FVector& WorldPosition) const;
+	bool NodeFromWorldPoint(const FVector& WorldPosition, FPathingNode* OutNode) const;
 	TArray<FPathingNode*> GetNeighbouringNodes(const FPathingNode* Node);
 	
 private:
@@ -45,7 +45,7 @@ private:
 	float NodeDiameter;
 	int32 GridSizeX;
 	int32 GridSizeY;
-	FPathingNode* Grid = nullptr;
+	TArray<FPathingNode*> Grid;
 	
 	UFUNCTION(CallInEditor, Category = "A* Grid", meta = (ToolTip="Generates grid data to be visualized in the editor, the data will be lost when playing or closing the editor"))
 	void GenerateGrid();

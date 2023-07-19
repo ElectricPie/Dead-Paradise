@@ -37,4 +37,7 @@ private:
 
 	void OnPathFound(TArray<const FVector*> NewPath, bool bPathWasFound);
 	void FollowPath();
+
+	UFUNCTION()
+	void DebugPathfinding();
 };

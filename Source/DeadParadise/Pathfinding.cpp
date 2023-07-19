@@ -32,8 +32,6 @@ void UPathfinding::BeginPlay()
 
 	PathRequestSubsystem = GetWorld()->GetSubsystem<UPathRequestSubsystem>();
 	PathRequestSubsystem->SetPathfinding(this);
-
-	GetOwner()->GetWorldTimerManager().SetTimer(DebugTimerHandle, this, &UPathfinding::DebugPathFind, 1.f, false, 1.f);
 }
 
 
@@ -43,21 +41,6 @@ void UPathfinding::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-	/*
-	if (!Seeker) return;
-	const FPathingNode* NodeAtSeeker = PathingGridComponent->NodeFromWorldPoint(Seeker->GetActorLocation());
-	if (!NodeAtSeeker) return;
-	DrawDebugBox(GetWorld(), NodeAtSeeker->GetWorldPosition(), FVector(PathingGridComponent->GetNodeRadius()) * 0.9f,
-	             FColor::Cyan);
-
-	if (!Target) return;
-	const FPathingNode* NodeAtTarget = PathingGridComponent->NodeFromWorldPoint(Target->GetActorLocation());
-	if (!NodeAtTarget) return;
-	DrawDebugBox(GetWorld(), NodeAtTarget->GetWorldPosition(), FVector(PathingGridComponent->GetNodeRadius()) * 0.9f,
-	             FColor::Orange);
-	
-	FindPath(Seeker->GetActorLocation(), Target->GetActorLocation());
-	*/
 }
 
 void UPathfinding::StartFindPath(const FVector& StartPosition, const FVector& TargetPosition)
@@ -72,11 +55,12 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 
 	TArray<const FVector*> Waypoints;
 	bool bPathSuccess = false;
-	
-	FPathingNode* StartNode = PathingGridComponent->NodeFromWorldPoint(StartPosition);
-	FPathingNode* TargetNode = PathingGridComponent->NodeFromWorldPoint(TargetPosition);
 
-	if (!StartNode->IsWalkable() || !TargetNode->IsWalkable())
+	FPathingNode* StartNode = nullptr;
+	FPathingNode* TargetNode = nullptr;
+	
+	if (PathingGridComponent->NodeFromWorldPoint(StartPosition, StartNode) ||
+		PathingGridComponent->NodeFromWorldPoint(TargetPosition, TargetNode))
 	{
 		return;
 	}
@@ -143,9 +127,6 @@ int32 UPathfinding::GetDistance(const FPathingNode* NodeA, const FPathingNode* N
 	return 14 * DistX + 10 * (DistY - DistX);
 }
 
-void UPathfinding::DebugPathFind()
-{
-}
 
 TArray<const FVector*> UPathfinding::RetracePath(const FPathingNode* StartNode, FPathingNode* EndNode) const
 {

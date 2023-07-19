@@ -23,9 +23,9 @@ void UUnitPathfinding::BeginPlay()
 
 	// ...
 	PathRequest = GetWorld()->GetSubsystem<UPathRequestSubsystem>();
-	
-	FOnPathRequestFinishedSignature Callback = FOnPathRequestFinishedSignature::CreateUObject(this, &UUnitPathfinding::OnPathFound);
-	PathRequest->RequestPath(GetOwner()->GetActorLocation(), Target->GetActorLocation(), Callback);
+
+	FTimerHandle DebugTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(DebugTimerHandle, this, &UUnitPathfinding::DebugPathfinding, 2, false);
 }
 
 
@@ -57,5 +57,11 @@ void UUnitPathfinding::OnPathFound(TArray<const FVector*> NewPath, bool bPathWas
 void UUnitPathfinding::FollowPath()
 {
 	const FVector* CurrentWaypoint = Path[0];
+}
+
+void UUnitPathfinding::DebugPathfinding()
+{
+	FOnPathRequestFinishedSignature Callback = FOnPathRequestFinishedSignature::CreateUObject(this, &UUnitPathfinding::OnPathFound);
+	PathRequest->RequestPath(GetOwner()->GetActorLocation(), Target->GetActorLocation(), Callback);
 }
 
