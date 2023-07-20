@@ -22,7 +22,6 @@ AUnit::AUnit()
 void AUnit::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -53,14 +52,21 @@ void AUnit::LerpToPoint(const FVector& StartLocation, const FVector& EndLocation
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
 	const float Alpha = FMath::Clamp((CurrentTime - StartTime) / (EndTime / StartTime), 0.f, 1.f);
 
-	const FVector NewLocation = FMath::Lerp(StartLocation, EndLocation, Alpha);
+	FVector NewLocation = FMath::Lerp(StartLocation, EndLocation, Alpha);
+
+	// Keep the unit from clipping into the ground
+	float CapsuleHeight = CapsuleComponent->GetScaledCapsuleHalfHeight();
+	FHitResult GroundHit;
+	FVector EndTrace = NewLocation - FVector(0.f, 0.f, CapsuleHeight * 1.5f);
+	FCollisionQueryParams TraceParams(FName(TEXT("GroundTrace"), true, true));
+	GetWorld()->LineTraceSingleByChannel(GroundHit, NewLocation, EndTrace, ECC_WorldStatic, TraceParams);
+	NewLocation.Z = GroundHit.ImpactPoint.Z + CapsuleHeight; 
+	
 	SetActorLocation(NewLocation);
 
 	// Stop the timer and inform any listens that the unit has stopped moving
 	if (Alpha >= 1.f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Unit At Point"));
-
 		GetWorldTimerManager().ClearTimer(MoveTimerHandle);
 
 		// Stores the delegates so they can be cleared ready for the next move
