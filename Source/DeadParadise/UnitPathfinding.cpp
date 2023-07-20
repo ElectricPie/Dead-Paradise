@@ -48,6 +48,8 @@ void UUnitPathfinding::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+
+	DrawRemainingPath();
 }
 
 void UUnitPathfinding::OnPathFound(TArray<const FVector*> NewPath, bool bPathWasFound)
@@ -55,12 +57,6 @@ void UUnitPathfinding::OnPathFound(TArray<const FVector*> NewPath, bool bPathWas
 	if (!bPathWasFound || !Unit) return;
 	
 	Path = NewPath;
-
-	for (int32 i = 0; i < Path.Num(); i ++)
-	{
-		DrawDebugSphere(GetWorld(), *NewPath[i], 50.f, 12,
-						FColor::Red, false, 10.f);
-	}
 
 	CurrentWaypointIndex = 0;
 	
@@ -73,6 +69,27 @@ void UUnitPathfinding::FollowPath()
 	const FVector* CurrentWaypoint = Path[0];
 }
 
+void UUnitPathfinding::DrawRemainingPath()
+{
+	if (Path.IsEmpty()) return;
+	
+	DrawDebugLine(GetWorld(), Unit->GetActorLocation(), *Path[CurrentWaypointIndex], FColor::Red,
+		false, FApp::GetDeltaTime());
+	
+	for (int32 i = CurrentWaypointIndex; i < Path.Num(); i ++)
+	{
+		DrawDebugSphere(GetWorld(), *Path[i], 50.f, 12,
+						FColor::Red, false, FApp::GetDeltaTime());
+
+		if (i + 1 < Path.Num())
+		{
+			DrawDebugLine(GetWorld(), *Path[i], *Path[i + 1], FColor::Red, false,
+				FApp::GetDeltaTime());
+		}
+	}
+}
+
+
 void UUnitPathfinding::DebugPathfinding()
 {
 	FOnPathRequestFinishedSignature Callback = FOnPathRequestFinishedSignature::CreateUObject(this, &UUnitPathfinding::OnPathFound);
@@ -81,7 +98,11 @@ void UUnitPathfinding::DebugPathfinding()
 
 void UUnitPathfinding::OnMoveFinished(bool bReachedTarget)
 {
-	if (CurrentWaypointIndex++ >= Path.Num() - 1) return;
-
+	if (CurrentWaypointIndex++ >= Path.Num() - 1)
+	{
+		Path.Empty();
+		return;
+	}
+	
 	Unit->MoveToPoint(*Path[CurrentWaypointIndex], 2.f, this, FName("OnMoveFinished"));
 }

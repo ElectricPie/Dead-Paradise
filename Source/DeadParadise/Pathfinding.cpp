@@ -45,7 +45,6 @@ void UPathfinding::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 
 void UPathfinding::StartFindPath(const FVector& StartPosition, const FVector& TargetPosition)
 {
-	// TODO: Call as coroutine
 	FindPath(StartPosition, TargetPosition);
 }
 
@@ -109,7 +108,6 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 		}
 	}
 	
-	// TODO: Yield return null (wait 1 frame)
 	if (bPathSuccess)
 	{
 		Waypoints = RetracePath(*StartNode, *TargetNode);
