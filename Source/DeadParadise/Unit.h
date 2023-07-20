@@ -47,5 +47,5 @@ private:
 	FTimerHandle MoveTimerHandle;
 
 	UFUNCTION()
-	void LerpToPoint(FVector& StartLocation, FVector& EndLocation, float StartTime, float EndTime);
+	void LerpToPoint(const FVector& StartLocation, const FVector& EndLocation, float StartTime, float EndTime);
 };

@@ -62,7 +62,9 @@ void UUnitPathfinding::OnPathFound(TArray<const FVector*> NewPath, bool bPathWas
 						FColor::Red, false, 10.f);
 	}
 
-	Unit->MoveToPoint(*Path[0], 2.f, this, FName("OnMoveFinished"));
+	CurrentWaypointIndex = 0;
+	
+	Unit->MoveToPoint(*Path[CurrentWaypointIndex], 2.f, this, FName("OnMoveFinished"));
 }
 
 // TODO: Handled movement in the Unit
@@ -79,5 +81,7 @@ void UUnitPathfinding::DebugPathfinding()
 
 void UUnitPathfinding::OnMoveFinished(bool bReachedTarget)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Unit Finished Moving"));
+	if (CurrentWaypointIndex++ >= Path.Num() - 1) return;
+
+	Unit->MoveToPoint(*Path[CurrentWaypointIndex], 2.f, this, FName("OnMoveFinished"));
 }

@@ -48,20 +48,25 @@ void AUnit::MoveToPoint(const FVector& TargetPosition, float Duration, UObject* 
 }
 
 
-void AUnit::LerpToPoint(FVector& StartLocation, FVector& EndLocation, float StartTime, float EndTime)
+void AUnit::LerpToPoint(const FVector& StartLocation, const FVector& EndLocation, const float StartTime, const float EndTime)
 {
-	float CurrentTime = GetWorld()->GetTimeSeconds();
-	float Alpha = FMath::Clamp((CurrentTime - StartTime) / (EndTime / StartTime), 0.f, 1.f);
+	const float CurrentTime = GetWorld()->GetTimeSeconds();
+	const float Alpha = FMath::Clamp((CurrentTime - StartTime) / (EndTime / StartTime), 0.f, 1.f);
 
-	FVector NewLocation = FMath::Lerp(StartLocation, EndLocation, Alpha);
+	const FVector NewLocation = FMath::Lerp(StartLocation, EndLocation, Alpha);
 	SetActorLocation(NewLocation);
 
 	// Stop the timer and inform any listens that the unit has stopped moving
 	if (Alpha >= 1.f)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Unit At Point"));
+
 		GetWorldTimerManager().ClearTimer(MoveTimerHandle);
-		OnMoveFinishedDelegate.Broadcast(false);
+
+		// Stores the delegates so they can be cleared ready for the next move
+		const FOnMoveFinishedSignature OnFinishedDelegate = OnMoveFinishedDelegate;
 		OnMoveFinishedDelegate.Clear();
+		OnFinishedDelegate.Broadcast(false);
 	}
 }
 

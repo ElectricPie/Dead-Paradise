@@ -41,6 +41,7 @@ private:
 	AActor* Target;
 
 	TArray<const FVector*> Path;
+	int32 CurrentWaypointIndex;
 
 	void OnPathFound(TArray<const FVector*> NewPath, bool bPathWasFound);
 	void FollowPath();
