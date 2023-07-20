@@ -11,7 +11,6 @@ AUnit::AUnit()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Collider"));
 	RootComponent = CapsuleComponent;
 
@@ -30,21 +29,24 @@ void AUnit::BeginPlay()
 void AUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 }
 
-void AUnit::MoveToPoint(const FVector& TargetPoint, float Duration)
+void AUnit::MoveToPoint(const FVector& TargetPosition, float Duration, UObject* CallbackObject, FName CallbackFunction)
 {
+	OnMoveFinishedDelegate.AddUFunction(CallbackObject, CallbackFunction);
+	
 	FVector StartLocation = GetActorLocation();
 
 	float CurrentTime = GetWorld()->GetTimeSeconds();
 	float EndTime = CurrentTime + Duration;
 
 	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindUFunction(this, FName("LerpToPoint"), StartLocation, TargetPoint, CurrentTime, EndTime);
+	TimerDelegate.BindUFunction(this, FName("LerpToPoint"), StartLocation, TargetPosition, CurrentTime, EndTime);
 	
 	GetWorldTimerManager().SetTimer(MoveTimerHandle, TimerDelegate, FApp::GetDeltaTime(), true);
 }
+
 
 void AUnit::LerpToPoint(FVector& StartLocation, FVector& EndLocation, float StartTime, float EndTime)
 {
@@ -54,9 +56,12 @@ void AUnit::LerpToPoint(FVector& StartLocation, FVector& EndLocation, float Star
 	FVector NewLocation = FMath::Lerp(StartLocation, EndLocation, Alpha);
 	SetActorLocation(NewLocation);
 
+	// Stop the timer and inform any listens that the unit has stopped moving
 	if (Alpha >= 1.f)
 	{
 		GetWorldTimerManager().ClearTimer(MoveTimerHandle);
+		OnMoveFinishedDelegate.Broadcast(false);
+		OnMoveFinishedDelegate.Clear();
 	}
 }
 

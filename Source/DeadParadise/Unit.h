@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Unit.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMoveFinishedSignature, bool /* bReachedTarget */);
+
 class UCapsuleComponent;
 
 UCLASS(meta=(ScriptName="RtsUnit"))
@@ -25,7 +27,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void MoveToPoint(const FVector& TargetPoint, float Duration);
+	/**
+	 * @brief Moves the target the given point over the given duration. Calls the callback function when moving is done
+	 * @param TargetPosition The position to move to
+	 * @param Duration How long it will take to move to the TargetPosition
+	 * @param CallbackObject Object for callback bind
+	 * @param CallbackFunction Callback function address
+	 */
+	void MoveToPoint(const FVector& TargetPosition, float Duration, UObject* CallbackObject, FName CallbackFunction);
 	
 private:
     UPROPERTY(VisibleDefaultsOnly, Category = "Components")
@@ -34,8 +43,9 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Components", meta=(AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* MeshComponent;
 
+	FOnMoveFinishedSignature OnMoveFinishedDelegate;
 	FTimerHandle MoveTimerHandle;
-	
+
 	UFUNCTION()
 	void LerpToPoint(FVector& StartLocation, FVector& EndLocation, float StartTime, float EndTime);
 };

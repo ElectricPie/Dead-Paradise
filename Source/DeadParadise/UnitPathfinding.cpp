@@ -62,7 +62,7 @@ void UUnitPathfinding::OnPathFound(TArray<const FVector*> NewPath, bool bPathWas
 						FColor::Red, false, 10.f);
 	}
 
-	Unit->MoveToPoint(*Path[0], 2.f);
+	Unit->MoveToPoint(*Path[0], 2.f, this, FName("OnMoveFinished"));
 }
 
 // TODO: Handled movement in the Unit
@@ -75,4 +75,9 @@ void UUnitPathfinding::DebugPathfinding()
 {
 	FOnPathRequestFinishedSignature Callback = FOnPathRequestFinishedSignature::CreateUObject(this, &UUnitPathfinding::OnPathFound);
 	PathRequest->RequestPath(GetOwner()->GetActorLocation(), Target->GetActorLocation(), Callback);
+}
+
+void UUnitPathfinding::OnMoveFinished(bool bReachedTarget)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Unit Finished Moving"));
 }

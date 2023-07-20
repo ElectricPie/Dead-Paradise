@@ -47,4 +47,7 @@ private:
 
 	UFUNCTION()
 	void DebugPathfinding();
+
+	UFUNCTION()
+	void OnMoveFinished(bool bReachedTarget);
 };
