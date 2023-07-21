@@ -24,7 +24,7 @@ public:
 	void Add(T& Item);
 	T& RemoveFirst();
 	bool Contains(T& Item);
-	void UpdateItem(const T& Item);
+	void UpdateItem(T& Item);
 
 private:
 	T** Items;
@@ -86,7 +86,7 @@ bool THeap<T>::Contains(T& Item)
 }
 
 template <typename T>
-void THeap<T>::UpdateItem(const T& Item)
+void THeap<T>::UpdateItem(T& Item)
 {
 	SortUp(Item);
 }

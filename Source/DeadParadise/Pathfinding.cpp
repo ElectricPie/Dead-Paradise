@@ -104,6 +104,10 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 				{
 					OpenSet.Add(*Neighbours[I]);
 				}
+				else
+				{
+					OpenSet.UpdateItem(*Neighbours[I]);
+				}
 			}
 		}
 	}
