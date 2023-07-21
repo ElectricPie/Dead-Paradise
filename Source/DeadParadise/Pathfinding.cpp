@@ -67,11 +67,11 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 	THeap<FPathingNode> OpenSet = THeap<FPathingNode>(PathingGridComponent->GetGridSize());
 	TSet<FPathingNode*> ClosedSet;
 
-	OpenSet.Add(StartNode);
+	OpenSet.Add(*StartNode);
 
 	while (OpenSet.Count() > 0)
 	{	
-		FPathingNode* CurrentNode = OpenSet.RemoveFirst();
+		FPathingNode* CurrentNode = &OpenSet.RemoveFirst();
 		ClosedSet.Add(CurrentNode);
 
 		if (*CurrentNode == *TargetNode)
@@ -94,15 +94,15 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 			}
 
 			const int32 NewMovementCostToNeighbour = CurrentNode->GCost + GetDistance(*CurrentNode, *Neighbours[I]);
-			if (NewMovementCostToNeighbour < Neighbours[I]->GCost || !OpenSet.Contains(Neighbours[I]))
+			if (NewMovementCostToNeighbour < Neighbours[I]->GCost || !OpenSet.Contains(*Neighbours[I]))
 			{
 				Neighbours[I]->GCost = NewMovementCostToNeighbour;
 				Neighbours[I]->HCost = GetDistance(*Neighbours[I], *TargetNode);
 				Neighbours[I]->ParentNode = CurrentNode;
 
-				if (!OpenSet.Contains(Neighbours[I]))
+				if (!OpenSet.Contains(*Neighbours[I]))
 				{
-					OpenSet.Add(Neighbours[I]);
+					OpenSet.Add(*Neighbours[I]);
 				}
 			}
 		}

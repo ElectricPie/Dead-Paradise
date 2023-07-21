@@ -17,22 +17,22 @@ class DEADPARADISE_API THeap
 	static_assert(TIsDerivedFrom<T, THeapItem<T>>::IsDerived, "Type must inherit from FHeapItem");
 	
 public:
-	THeap(int32 MaxHeapSize);
+	explicit THeap(int32 MaxHeapSize);
 	~THeap();
 
 	int32 Count() const;
-	void Add(T* Item);
-	T* RemoveFirst();
-	bool Contains(T* Item);
-	void UpdateItem(const T* Item);
+	void Add(T& Item);
+	T& RemoveFirst();
+	bool Contains(T& Item);
+	void UpdateItem(const T& Item);
 
 private:
 	T** Items;
 	int32 CurrentItemCount;
 	
-	void SortUp(T* Item);
-	void SwapEl(T* ItemA, T* ItemB);
-	void SortDown(T* Item);
+	void SortUp(T& Item);
+	void SwapEl(T& ItemA, T& ItemB);
+	void SortDown(T& Item);
 };
 
 
@@ -55,50 +55,50 @@ int32 THeap<T>::Count() const
 }
 
 template <typename T>
-void THeap<T>::Add(T* Item)
+void THeap<T>::Add(T& Item)
 {
-	Item->HeapIndex = CurrentItemCount;
-	Items[CurrentItemCount] = Item;
-	SortUp(Items[CurrentItemCount]);
+	Item.HeapIndex = CurrentItemCount;
+	Items[CurrentItemCount] = &Item;
+	SortUp(*Items[CurrentItemCount]);
 	CurrentItemCount++;
 }
 
 template <typename T>
-T* THeap<T>::RemoveFirst()
+T& THeap<T>::RemoveFirst()
 {
-	T* FirstItem = Items[0];
+	T& FirstItem = *Items[0];
 	CurrentItemCount--;
 	Items[0] = Items[CurrentItemCount];
 	Items[0]->HeapIndex = 0;
-	SortDown(Items[0]);
+	SortDown(*Items[0]);
 	return FirstItem;
 }
 
 template <typename T>
-bool THeap<T>::Contains(T* Item)
+bool THeap<T>::Contains(T& Item)
 {
-	if (T* ItemAtHeapIndex = Items[Item->HeapIndex])
+	if (T* ItemAtHeapIndex = Items[Item.HeapIndex])
 	{
-		return Item == ItemAtHeapIndex;
+		return &Item == ItemAtHeapIndex;
 	}
 	
 	return false;
 }
 
 template <typename T>
-void THeap<T>::UpdateItem(const T* Item)
+void THeap<T>::UpdateItem(const T& Item)
 {
 	SortUp(Item);
 }
 
 template <typename T>
-void THeap<T>::SortUp(T* Item)
+void THeap<T>::SortUp(T& Item)
 {
-	int32 ParentIndex = (Item->HeapIndex - 1) / 2;
+	int32 ParentIndex = (Item.HeapIndex - 1) / 2;
 	while (true)
 	{
-		T* ParentItem = Items[ParentIndex];
-		int32 CompareValue = Item->CompareTo(*ParentItem);
+		T& ParentItem = *Items[ParentIndex];
+		const int32 CompareValue = Item.CompareTo(ParentItem);
 		if (CompareValue > 0)
 		{
 			SwapEl(Item, ParentItem);
@@ -108,28 +108,28 @@ void THeap<T>::SortUp(T* Item)
 			break;
 		}
 
-		ParentIndex = (Item->HeapIndex - 1) / 2;
+		ParentIndex = (Item.HeapIndex - 1) / 2;
 	}
 	
 }
 
 template <typename T>
-void THeap<T>::SwapEl(T* ItemA, T* ItemB)
+void THeap<T>::SwapEl(T& ItemA, T& ItemB)
 {
-	Swap(Items[ItemA->HeapIndex], Items[ItemB->HeapIndex]);
-	const int ItemAIndex = ItemA->HeapIndex;
-	ItemA->HeapIndex = ItemB->HeapIndex;
-	ItemB->HeapIndex = ItemAIndex;
+	Swap(Items[ItemA.HeapIndex], Items[ItemB.HeapIndex]);
+	const int ItemAIndex = ItemA.HeapIndex;
+	ItemA.HeapIndex = ItemB.HeapIndex;
+	ItemB.HeapIndex = ItemAIndex;
 	
 }
 
 template <typename T>
-void THeap<T>::SortDown(T* Item)
+void THeap<T>::SortDown(T& Item)
 {
 	while (true)
 	{
-		int32 ChildIndexLeft = Item->HeapIndex * 2 + 1;
-		int32 ChildIndexRight = Item->HeapIndex * 2 + 2;
+		int32 ChildIndexLeft = Item.HeapIndex * 2 + 1;
+		int32 ChildIndexRight = Item.HeapIndex * 2 + 2;
 		int32 SwapIndex = 0;
 
 		if (ChildIndexLeft < CurrentItemCount)
@@ -144,9 +144,9 @@ void THeap<T>::SortDown(T* Item)
 				}
 			}
 
-			if (Item->CompareTo(*Items[SwapIndex]) < 0)
+			if (Item.CompareTo(*Items[SwapIndex]) < 0)
 			{
-				SwapEl(Item, Items[SwapIndex]);
+				SwapEl(Item, *Items[SwapIndex]);
 			}
 			else
 			{
