@@ -64,7 +64,7 @@ private:
 	UDataLayerAsset* UnwalkableDataLayer = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "A* Grid", meta = (AllowPrivateAccess = "true"))
-	TArray<TWeakObjectPtr<UPathfindingTerrain>> TerrainRegions;
+	TArray<UPathfindingTerrain*> TerrainRegions;
 
 	float NodeDiameter;
 	int32 GridSizeX;

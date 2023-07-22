@@ -129,15 +129,6 @@ void APathfindingGrid::GenerateGrid()
 					bIsWalkable = false;
 					break;
 				}
-
-				// the hit actor 
-				for (const TWeakObjectPtr<UPathfindingTerrain> Region : TerrainRegions)
-				{
-					if (Actor->ContainsDataLayer(Region.Get()->TerrainDataLayer.Get()))
-					{
-						MovementPenalty = Region.Get()->MovementPenalty;
-					}
-				}
 			}
 
 			// Assign a movement penalty depending on the terrain below the node
@@ -152,7 +143,7 @@ void APathfindingGrid::GenerateGrid()
 				{
 					if (Terrain.IsValid())
 					{
-						if (TerrainHit->ContainsDataLayer(Terrain.Get()->TerrainDataLayer.Get()))
+						if (TerrainHit->ContainsDataLayer(Terrain->TerrainDataLayer))
 						{
 							MovementPenalty = Terrain.Get()->MovementPenalty;
 						}

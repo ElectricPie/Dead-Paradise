@@ -16,7 +16,7 @@ class DEADPARADISE_API UPathfindingTerrain : public UDataAsset
 
 public:
 	UPROPERTY(EditAnywhere)
-	TWeakObjectPtr<UDataLayerAsset> TerrainDataLayer;
+	UDataLayerAsset* TerrainDataLayer;
 
 	UPROPERTY(EditAnywhere)
 	int32 MovementPenalty;
