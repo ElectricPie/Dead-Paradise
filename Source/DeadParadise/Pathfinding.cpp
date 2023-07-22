@@ -93,7 +93,9 @@ void UPathfinding::FindPath(const FVector& StartPosition, const FVector& TargetP
 				continue;
 			}
 
-			const int32 NewMovementCostToNeighbour = CurrentNode->GCost + GetDistance(*CurrentNode, *Neighbours[I]);
+			const int32 NewMovementCostToNeighbour = CurrentNode->GCost +
+				GetDistance(*CurrentNode, *Neighbours[I]) + Neighbours[I]->GetMovementPenalty();
+			
 			if (NewMovementCostToNeighbour < Neighbours[I]->GCost || !OpenSet.Contains(*Neighbours[I]))
 			{
 				Neighbours[I]->GCost = NewMovementCostToNeighbour;

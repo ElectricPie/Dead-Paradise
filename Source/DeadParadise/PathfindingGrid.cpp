@@ -2,6 +2,8 @@
 
 
 #include "PathfindingGrid.h"
+
+#include "PathfindingTerrain.h"
 #include "PathingNode.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -116,7 +118,9 @@ void APathfindingGrid::GenerateGrid()
 			
 			UKismetSystemLibrary::SphereOverlapActors(this, WorldPoint, NodeRadius, TraceObjectTypes, nullptr, IgnoreActors, HitActors);
 
-			// Check if the overlapping actors are unwalkable
+			int32 MovementPenalty = 0;
+
+			// Check if the overlapping actors have specific dataloader
 			for (const AActor* Actor : HitActors)
 			{
 				// Stop checking actors when any are unwalkable
@@ -125,10 +129,39 @@ void APathfindingGrid::GenerateGrid()
 					bIsWalkable = false;
 					break;
 				}
+
+				// the hit actor 
+				for (const TWeakObjectPtr<UPathfindingTerrain> Region : TerrainRegions)
+				{
+					if (Actor->ContainsDataLayer(Region.Get()->TerrainDataLayer.Get()))
+					{
+						MovementPenalty = Region.Get()->MovementPenalty;
+					}
+				}
+			}
+
+			// Assign a movement penalty depending on the terrain below the node
+			FHitResult GroundHit;
+			FVector EndTrace = WorldPoint;
+			EndTrace.Z -= 100.f;
+			FCollisionQueryParams TraceParams(FName(TEXT("GroundTrace"), true, true));
+			GetWorld()->LineTraceSingleByChannel(GroundHit, WorldPoint, EndTrace, ECC_WorldStatic, TraceParams);
+			if (AActor* TerrainHit = GroundHit.GetActor())
+			{
+				for (const TWeakObjectPtr<UPathfindingTerrain> Terrain : TerrainRegions)
+				{
+					if (Terrain.IsValid())
+					{
+						if (TerrainHit->ContainsDataLayer(Terrain.Get()->TerrainDataLayer.Get()))
+						{
+							MovementPenalty = Terrain.Get()->MovementPenalty;
+						}
+					}
+				}
 			}
 			
 			const FVector* NodeWorldPosition = new FVector(WorldPoint.X, WorldPoint.Y, WorldPoint.Z);
-			FPathingNode* NewNode = new FPathingNode(bIsWalkable, *NodeWorldPosition, X, Y);
+			FPathingNode* NewNode = new FPathingNode(bIsWalkable, *NodeWorldPosition, X, Y, MovementPenalty);
 			GeneratedGrid.Add(NewNode);
 		}
 	}

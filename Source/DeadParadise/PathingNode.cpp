@@ -3,7 +3,8 @@
 
 #include "PathingNode.h"
 
-FPathingNode::FPathingNode(const bool IsWalkable, const FVector& NodeWorldPosition, const int32 NodeGridX, const int32 NodeGridY) : WorldPosition(NodeWorldPosition)
+FPathingNode::FPathingNode(const bool IsWalkable, const FVector& NodeWorldPosition, const int32 NodeGridX,
+	const int32 NodeGridY, const int32 MovementPenalty) : MovementPenalty(MovementPenalty), WorldPosition(NodeWorldPosition)
 {
 	bIsWalkable = IsWalkable;
 	GridX = NodeGridX;
@@ -45,6 +46,11 @@ bool FPathingNode::IsWalkable() const
 int FPathingNode::GetFCost() const
 {
 	return GCost + HCost;
+}
+
+int32 FPathingNode::GetMovementPenalty() const
+{
+	return MovementPenalty;
 }
 
 int32 FPathingNode::CompareTo(const FPathingNode& NodeToCompare)

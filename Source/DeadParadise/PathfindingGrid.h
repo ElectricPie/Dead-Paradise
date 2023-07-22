@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "PathfindingGrid.generated.h"
 
+class UPathfindingTerrain;
 class FPathingNode;
 
 UCLASS()
@@ -61,6 +62,9 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category = "A* Grid", meta = (AllowPrivateAccess = "true"))
 	UDataLayerAsset* UnwalkableDataLayer = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "A* Grid", meta = (AllowPrivateAccess = "true"))
+	TArray<TWeakObjectPtr<UPathfindingTerrain>> TerrainRegions;
 
 	float NodeDiameter;
 	int32 GridSizeX;
