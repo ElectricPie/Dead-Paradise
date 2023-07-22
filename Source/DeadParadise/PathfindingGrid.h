@@ -69,8 +69,12 @@ private:
 	float NodeDiameter;
 	int32 GridSizeX;
 	int32 GridSizeY;
+	// This is a 1D array being used as a 2D array so to get a value use X * GridSizeY + Y
 	TArray<FPathingNode*> Grid;
 	
 	UFUNCTION(CallInEditor, Category = "A* Grid", meta = (ToolTip="Generates grid data to be visualized in the editor, the data will be lost when playing or closing the editor"))
 	void GenerateGrid();
+
+	void BlurPenaltyMap(int32 BlurSize);
+	
 };

@@ -159,4 +159,59 @@ void APathfindingGrid::GenerateGrid()
 
 	UE_LOG(LogTemp, Warning, TEXT("Grid finished generating"));
 	Grid = GeneratedGrid;
+	BlurPenaltyMap(3);
+}
+
+void APathfindingGrid::BlurPenaltyMap(const int32 BlurSize)
+{
+	const int32 KernelSize = BlurSize * 2 + 1;
+	const int32 KernelExtents = (KernelSize - 1) / 2;
+
+	TArray<int32> PenaltiesHorizontalPass;
+	PenaltiesHorizontalPass.Init(0, GridSizeX * GridSizeY);
+	TArray<int32> PenaltiesVerticalPass;
+	PenaltiesVerticalPass.Init(0, GridSizeX * GridSizeY);
+
+	// Horizontal pass
+	for (int32 y = 0; y < GridSizeY; y++)
+	{
+		for (int32 x = -KernelExtents; x <= KernelExtents; x++)
+		{
+			const int32 SampleX = FMath::Clamp(x, 0, KernelExtents);
+			PenaltiesHorizontalPass[0 * GridSizeY + y] += Grid[SampleX * GridSizeY + y]->MovementPenalty;
+		}
+
+		for (int32 x = 1; x < GridSizeX; x++)
+		{
+			const int32 RemoveIndex = FMath::Clamp(x - KernelExtents - 1, 0, GridSizeX);
+			const int32 AddIndex = FMath::Clamp(x + KernelExtents, 0, GridSizeX - 1);
+
+			PenaltiesHorizontalPass[x * GridSizeY + y] = PenaltiesHorizontalPass[(x - 1) * GridSizeY + y]
+			- Grid[RemoveIndex * GridSizeY + y]->MovementPenalty
+			+ Grid[AddIndex * GridSizeY + y]->MovementPenalty;
+		}
+	}
+
+	// Vertical pass
+	for (int32 x = 0; x < GridSizeX; x++)
+	{
+		for (int32 y = -KernelExtents; y <= KernelExtents; y++)
+		{
+			const int32 SampleY = FMath::Clamp(y, 0, KernelExtents);
+			PenaltiesVerticalPass[x * GridSizeY + 0] += Grid[x * GridSizeY + SampleY]->MovementPenalty;
+		}
+
+		for (int32 y = 1; y < GridSizeX; y++)
+		{
+			const int32 RemoveIndex = FMath::Clamp(y - KernelExtents - 1, 0, GridSizeY);
+			const int32 AddIndex = FMath::Clamp(y + KernelExtents, 0, GridSizeY - 1);
+
+			PenaltiesVerticalPass[x * GridSizeY + y] = PenaltiesHorizontalPass[x * GridSizeY + y - 1]
+			- PenaltiesHorizontalPass[x * GridSizeY + RemoveIndex]
+			+ PenaltiesHorizontalPass[x * GridSizeY + AddIndex];
+
+			const int32 BlurredPenalty = FMath::RoundToInt32(static_cast<float>(PenaltiesVerticalPass[x * GridSizeY + y]) / (KernelSize * KernelSize));
+			Grid[x * GridSizeY + y]->MovementPenalty = BlurredPenalty;
+		}
+	}
 }
