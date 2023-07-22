@@ -137,6 +137,7 @@ void APathfindingGrid::GenerateGrid()
 				if (Actor->ContainsDataLayer(UnwalkableDataLayer))
 				{
 					bIsWalkable = false;
+					MovementPenalty += ObstacleProximityPenalty; 
 					break;
 				}
 			}

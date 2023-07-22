@@ -59,16 +59,16 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category = "A* Grid", meta = (AllowPrivateAccess = "true"))
 	FVector2D GridWorldSize = FVector2D(1000);
-
 	UPROPERTY(EditAnywhere, Category = "A* Grid", meta = (AllowPrivateAccess = "true"))
 	float NodeRadius = 50.f;
 	
-	UPROPERTY(EditAnywhere, Category = "A* Grid", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "Path Modifiers", meta = (AllowPrivateAccess = "true"))
 	UDataLayerAsset* UnwalkableDataLayer = nullptr;
-
-	UPROPERTY(EditAnywhere, Category = "A* Grid", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "Path Modifiers", meta = (AllowPrivateAccess = "true"))
 	TArray<UPathfindingTerrain*> TerrainRegions;
-
+	UPROPERTY(EditAnywhere, Category = "Path Modifiers", meta = (AllowPrivateAccess = "true"))
+	int32 ObstacleProximityPenalty = 10;
+	
 	float NodeDiameter;
 	int32 GridSizeX;
 	int32 GridSizeY;
