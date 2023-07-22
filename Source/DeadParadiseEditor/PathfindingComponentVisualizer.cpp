@@ -3,9 +3,11 @@
 
 #include "PathfindingComponentVisualizer.h"
 
+#include "DeadParadiseEditor.h"
 #include "DeadParadise/PathfindingGrid.h"
 #include "DeadParadise/PathfindingGridVisualiser.h"
 #include "DeadParadise/PathingNode.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 void FPathfindingComponentVisualizer::DrawVisualization(const UActorComponent* Component, const FSceneView* View,
@@ -39,17 +41,26 @@ void FPathfindingComponentVisualizer::DrawGridNodes(FPrimitiveDrawInterface* PDI
 {
 	if (PathfindingGrid.Grid.IsEmpty()) return;
 
+	const int32 MinPenalty = PathfindingGrid.PenaltyMin;
+	const int32 MaxPenalty = PathfindingGrid.PenaltyMax;
+
+	const TArray<FPathingNode*> Grid = PathfindingGrid.Grid;
+	
+	// Draws the box for each node
 	for (int X = 0; X < PathfindingGrid.GridSizeX; X++)
 	{
 		for (int Y = 0; Y < PathfindingGrid.GridSizeY; Y++)
 		{
-			// Draws the box for each node
-			const TArray<FPathingNode*> Grid = PathfindingGrid.Grid;
-			FLinearColor WalkableColor = Grid[X*PathfindingGrid.GridSizeY+Y]->IsWalkable() ? FLinearColor::Green : FLinearColor::Red;
+			const FPathingNode* Node = Grid[X * PathfindingGrid.GridSizeY + Y];
+			FLinearColor NodeColor = UnwalkableColor;
+			if (Node->IsWalkable())
+			{
+				NodeColor = UKismetMathLibrary::LinearColorLerp(MinPenaltyColor, MaxPenaltyColor, UKismetMathLibrary::NormalizeToRange(Node->MovementPenalty, MinPenalty, MaxPenalty));
+			}
 			const FVector NodeSize = FVector(PathfindingGrid.NodeRadius) * 0.9f;
-			const FBox NodeBox = FBox::BuildAABB(Grid[X*PathfindingGrid.GridSizeY+Y]->GetWorldPosition(), NodeSize * 0.9f);
+			const FBox NodeBox = FBox::BuildAABB(Node->GetWorldPosition(), NodeSize * 0.9f);
 					
-			DrawWireBox(PDI, NodeBox, WalkableColor, SDPG_World);
+			DrawWireBox(PDI, NodeBox, NodeColor, SDPG_World);
 		}
 	}
 }

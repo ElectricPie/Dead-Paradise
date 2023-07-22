@@ -90,6 +90,16 @@ bool APathfindingGrid::GetNeighbouringNodes(const FPathingNode& Node, OUT TArray
 	return true;
 }
 
+int32 APathfindingGrid::GetPenaltyMin() const
+{
+	return PenaltyMin;
+}
+
+int32 APathfindingGrid::GetPenaltyMax() const
+{
+	return PenaltyMax;
+}
+
 void APathfindingGrid::GenerateGrid()
 {
 	// Clear the grid to prevent anything accessing it while it is being generated
@@ -212,6 +222,16 @@ void APathfindingGrid::BlurPenaltyMap(const int32 BlurSize)
 
 			const int32 BlurredPenalty = FMath::RoundToInt32(static_cast<float>(PenaltiesVerticalPass[x * GridSizeY + y]) / (KernelSize * KernelSize));
 			Grid[x * GridSizeY + y]->MovementPenalty = BlurredPenalty;
+
+			if (BlurredPenalty > PenaltyMax)
+			{
+				PenaltyMax = BlurredPenalty;
+			}
+
+			if (BlurredPenalty < PenaltyMin)
+			{
+				PenaltyMin = BlurredPenalty;
+			}
 		}
 	}
 }

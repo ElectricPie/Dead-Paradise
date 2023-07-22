@@ -50,6 +50,9 @@ public:
 	 * @return Returns false if something went wrong other wise will return true
 	 */
 	bool GetNeighbouringNodes(const FPathingNode& Node, OUT TArray<FPathingNode*>& OutNeighboringNodes);
+
+	int32 GetPenaltyMin() const;
+	int32 GetPenaltyMax() const;
 	
 private:
 	friend class FPathfindingComponentVisualizer;
@@ -71,6 +74,8 @@ private:
 	int32 GridSizeY;
 	// This is a 1D array being used as a 2D array so to get a value use X * GridSizeY + Y
 	TArray<FPathingNode*> Grid;
+	int32 PenaltyMin = INT_MAX;
+	int32 PenaltyMax = INT_MIN;
 	
 	UFUNCTION(CallInEditor, Category = "A* Grid", meta = (ToolTip="Generates grid data to be visualized in the editor, the data will be lost when playing or closing the editor"))
 	void GenerateGrid();
