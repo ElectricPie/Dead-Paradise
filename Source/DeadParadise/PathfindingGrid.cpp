@@ -208,19 +208,22 @@ void APathfindingGrid::BlurPenaltyMap(const int32 BlurSize)
 		for (int32 y = -KernelExtents; y <= KernelExtents; y++)
 		{
 			const int32 SampleY = FMath::Clamp(y, 0, KernelExtents);
-			PenaltiesVerticalPass[x * GridSizeY + 0] += Grid[x * GridSizeY + SampleY]->MovementPenalty;
+			PenaltiesVerticalPass[x * GridSizeY + 0] += PenaltiesHorizontalPass[x * GridSizeY + SampleY];
 		}
+		
+		int32 BlurredPenalty = FMath::RoundToInt32(static_cast<float>(PenaltiesVerticalPass[x * GridSizeY + 0]) / (KernelSize * KernelSize));
+		Grid[x * GridSizeY + 0]->MovementPenalty = BlurredPenalty;
 
 		for (int32 y = 1; y < GridSizeX; y++)
 		{
 			const int32 RemoveIndex = FMath::Clamp(y - KernelExtents - 1, 0, GridSizeY);
 			const int32 AddIndex = FMath::Clamp(y + KernelExtents, 0, GridSizeY - 1);
 
-			PenaltiesVerticalPass[x * GridSizeY + y] = PenaltiesHorizontalPass[x * GridSizeY + y - 1]
+			PenaltiesVerticalPass[x * GridSizeY + y] = PenaltiesVerticalPass[x * GridSizeY + y - 1]
 			- PenaltiesHorizontalPass[x * GridSizeY + RemoveIndex]
 			+ PenaltiesHorizontalPass[x * GridSizeY + AddIndex];
 
-			const int32 BlurredPenalty = FMath::RoundToInt32(static_cast<float>(PenaltiesVerticalPass[x * GridSizeY + y]) / (KernelSize * KernelSize));
+			BlurredPenalty = FMath::RoundToInt32(static_cast<float>(PenaltiesVerticalPass[x * GridSizeY + y]) / (KernelSize * KernelSize));
 			Grid[x * GridSizeY + y]->MovementPenalty = BlurredPenalty;
 
 			if (BlurredPenalty > PenaltyMax)
