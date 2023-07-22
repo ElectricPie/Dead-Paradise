@@ -7,6 +7,7 @@
 #include "UnitPathfinding.generated.h"
 
 
+class APathfindingGrid;
 class AUnit;
 class UPathRequestSubsystem;
 
@@ -39,6 +40,10 @@ private:
 
 	UPROPERTY(EditInstanceOnly, Category = "Debug", meta=(AllowPrivateAccess = "true"))
 	AActor* Target;
+
+	// Used to get the grid node size
+	UPROPERTY(EditAnywhere, Category = "Debug", meta=(AllowPrivateAccess = "true"))
+	APathfindingGrid* PathfindingGrid = nullptr;
 
 	TArray<const FVector*> Path;
 	int32 CurrentWaypointIndex;

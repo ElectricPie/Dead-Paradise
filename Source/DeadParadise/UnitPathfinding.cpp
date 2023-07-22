@@ -2,6 +2,8 @@
 
 
 #include "UnitPathfinding.h"
+
+#include "PathfindingGrid.h"
 #include "PathRequestSubsystem.h"
 #include "Unit.h"
 
@@ -72,13 +74,19 @@ void UUnitPathfinding::FollowPath()
 void UUnitPathfinding::DrawRemainingPath()
 {
 	if (Path.IsEmpty()) return;
+
+	int32 NodeSize = 50.f;
+	if (PathfindingGrid)
+	{
+		NodeSize = PathfindingGrid->GetNodeRadius();
+	}
 	
 	DrawDebugLine(GetWorld(), Unit->GetActorLocation(), *Path[CurrentWaypointIndex], FColor::Red,
 		false, FApp::GetDeltaTime());
 	
 	for (int32 i = CurrentWaypointIndex; i < Path.Num(); i ++)
 	{
-		DrawDebugSphere(GetWorld(), *Path[i], 50.f, 12,
+		DrawDebugSphere(GetWorld(), *Path[i], NodeSize, 12,
 						FColor::Red, false, FApp::GetDeltaTime());
 
 		if (i + 1 < Path.Num())
