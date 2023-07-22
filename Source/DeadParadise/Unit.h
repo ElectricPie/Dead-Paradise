@@ -30,18 +30,18 @@ public:
 	/**
 	 * @brief Moves the target the given point over the given duration. Calls the callback function when moving is done
 	 * @param TargetPosition The position to move to
-	 * @param Duration How long it will take to move to the TargetPosition
 	 * @param CallbackObject Object for callback bind
 	 * @param CallbackFunction Callback function address
 	 */
-	void MoveToPoint(const FVector& TargetPosition, float Duration, UObject* CallbackObject, FName CallbackFunction);
+	void MoveToPoint(const FVector& TargetPosition, UObject* CallbackObject, FName CallbackFunction);
 	
 private:
     UPROPERTY(VisibleDefaultsOnly, Category = "Components")
 	UCapsuleComponent* CapsuleComponent;
-
 	UPROPERTY(VisibleDefaultsOnly, Category = "Components", meta=(AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* MeshComponent;
+	UPROPERTY(EditAnywhere, Category = "Movement", meta=(AllowPrivateAccess = "true"))
+	float MovementSpeedModifier = 200.f;
 
 	FOnMoveFinishedSignature OnMoveFinishedDelegate;
 	FTimerHandle MoveTimerHandle;

@@ -31,14 +31,17 @@ void AUnit::Tick(float DeltaTime)
 	
 }
 
-void AUnit::MoveToPoint(const FVector& TargetPosition, float Duration, UObject* CallbackObject, FName CallbackFunction)
+void AUnit::MoveToPoint(const FVector& TargetPosition, UObject* CallbackObject, FName CallbackFunction)
 {
 	OnMoveFinishedDelegate.AddUFunction(CallbackObject, CallbackFunction);
 	
 	FVector StartLocation = GetActorLocation();
 
+	const float DistanceToPoint = FVector::Dist(StartLocation, TargetPosition);
+	const float TimeToWaypoint = DistanceToPoint / MovementSpeedModifier;
+	
 	float CurrentTime = GetWorld()->GetTimeSeconds();
-	float EndTime = CurrentTime + Duration;
+	float EndTime = CurrentTime + TimeToWaypoint;
 
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindUFunction(this, FName("LerpToPoint"), StartLocation, TargetPosition, CurrentTime, EndTime);
@@ -50,7 +53,7 @@ void AUnit::MoveToPoint(const FVector& TargetPosition, float Duration, UObject* 
 void AUnit::LerpToPoint(const FVector& StartLocation, const FVector& EndLocation, const float StartTime, const float EndTime)
 {
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
-	const float Alpha = FMath::Clamp((CurrentTime - StartTime) / (EndTime / StartTime), 0.f, 1.f);
+	const float Alpha = FMath::Clamp((CurrentTime - StartTime) / (EndTime - StartTime), 0.f, 1.f);
 
 	FVector NewLocation = FMath::Lerp(StartLocation, EndLocation, Alpha);
 

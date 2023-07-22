@@ -62,7 +62,7 @@ void UUnitPathfinding::OnPathFound(TArray<const FVector*> NewPath, bool bPathWas
 
 	CurrentWaypointIndex = 0;
 	
-	Unit->MoveToPoint(*Path[CurrentWaypointIndex], 2.f, this, FName("OnMoveFinished"));
+	Unit->MoveToPoint(*Path[CurrentWaypointIndex], this, FName("OnMoveFinished"));
 }
 
 // TODO: Handled movement in the Unit
@@ -112,5 +112,5 @@ void UUnitPathfinding::OnMoveFinished(bool bReachedTarget)
 		return;
 	}
 	
-	Unit->MoveToPoint(*Path[CurrentWaypointIndex], 2.f, this, FName("OnMoveFinished"));
+	Unit->MoveToPoint(*Path[CurrentWaypointIndex], this, FName("OnMoveFinished"));
 }
