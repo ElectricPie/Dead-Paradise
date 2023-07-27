@@ -35,6 +35,9 @@ void AUnit::Tick(float DeltaTime)
 void AUnit::MoveToPoint(const FVector& TargetPosition, UObject* CallbackObject, FName CallbackFunction)
 {
 	OnMoveFinishedDelegate.AddUFunction(CallbackObject, CallbackFunction);
+
+	const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetPosition);
+	SetActorRotation(LookAtRotation);
 	
 	FVector StartLocation = GetActorLocation();
 
@@ -89,4 +92,3 @@ void AUnit::GroundUnit()
 
 	SetActorLocation(UnitLocation);
 }
-
