@@ -65,12 +65,6 @@ void UUnitPathfinding::OnPathFound(TArray<const FVector*> NewPath, bool bPathWas
 	Unit->MoveToPoint(*Path[CurrentWaypointIndex], this, FName("OnMoveFinished"));
 }
 
-// TODO: Handled movement in the Unit
-void UUnitPathfinding::FollowPath()
-{
-	const FVector* CurrentWaypoint = Path[0];
-}
-
 void UUnitPathfinding::DrawRemainingPath()
 {
 	if (Path.IsEmpty()) return;

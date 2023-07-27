@@ -48,4 +48,9 @@ private:
 
 	UFUNCTION()
 	void LerpToPoint(const FVector& StartLocation, const FVector& EndLocation, float StartTime, float EndTime);
+
+	/**
+	 * @brief Moves the unit to closest object below them
+	 */
+	void GroundUnit();
 };

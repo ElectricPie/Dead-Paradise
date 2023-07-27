@@ -49,7 +49,6 @@ private:
 	int32 CurrentWaypointIndex;
 
 	void OnPathFound(TArray<const FVector*> NewPath, bool bPathWasFound);
-	void FollowPath();
 	void DrawRemainingPath();
 
 	UFUNCTION()

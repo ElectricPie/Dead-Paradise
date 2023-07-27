@@ -4,6 +4,7 @@
 #include "Unit.h"
 
 #include "Components/CapsuleComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AUnit::AUnit()
@@ -50,22 +51,17 @@ void AUnit::MoveToPoint(const FVector& TargetPosition, UObject* CallbackObject, 
 }
 
 
+
 void AUnit::LerpToPoint(const FVector& StartLocation, const FVector& EndLocation, const float StartTime, const float EndTime)
 {
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
 	const float Alpha = FMath::Clamp((CurrentTime - StartTime) / (EndTime - StartTime), 0.f, 1.f);
 
-	FVector NewLocation = FMath::Lerp(StartLocation, EndLocation, Alpha);
-
-	// Keep the unit from clipping into the ground
-	float CapsuleHeight = CapsuleComponent->GetScaledCapsuleHalfHeight();
-	FHitResult GroundHit;
-	FVector EndTrace = NewLocation - FVector(0.f, 0.f, CapsuleHeight * 1.5f);
-	FCollisionQueryParams TraceParams(FName(TEXT("GroundTrace"), true, true));
-	GetWorld()->LineTraceSingleByChannel(GroundHit, NewLocation, EndTrace, ECC_WorldStatic, TraceParams);
-	NewLocation.Z = GroundHit.ImpactPoint.Z + CapsuleHeight; 
+	const FVector NewLocation = FMath::Lerp(StartLocation, EndLocation, Alpha);
 	
+	// TODO: Adding off set is causing issues so will just do checks for blocking objects later
 	SetActorLocation(NewLocation);
+	GroundUnit();
 
 	// Stop the timer and inform any listens that the unit has stopped moving
 	if (Alpha >= 1.f)
@@ -77,5 +73,20 @@ void AUnit::LerpToPoint(const FVector& StartLocation, const FVector& EndLocation
 		OnMoveFinishedDelegate.Clear();
 		OnFinishedDelegate.Broadcast(false);
 	}
+}
+
+void AUnit::GroundUnit()
+{
+	FVector UnitLocation = GetActorLocation();
+	
+	// Keep the unit from clipping into the ground
+	float CapsuleHeight = CapsuleComponent->GetScaledCapsuleHalfHeight();
+	FHitResult GroundHit;
+	FVector EndTrace = UnitLocation - FVector(0.f, 0.f, CapsuleHeight * 1.5f);
+	FCollisionQueryParams TraceParams(FName(TEXT("GroundTrace"), true, true));
+	GetWorld()->LineTraceSingleByChannel(GroundHit, UnitLocation, EndTrace, ECC_WorldStatic, TraceParams);
+	UnitLocation.Z = GroundHit.ImpactPoint.Z + CapsuleHeight;
+
+	SetActorLocation(UnitLocation);
 }
 
