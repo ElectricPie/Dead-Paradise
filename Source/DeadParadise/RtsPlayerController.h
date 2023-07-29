@@ -22,11 +22,14 @@ protected:
 	virtual void SetupInputComponent() override;
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputMappingContext* InputMappingContext;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* SelectAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	float SelectionRaycastDistance = 2000.f;
 	
 	void Select();
 };
