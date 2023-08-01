@@ -55,6 +55,8 @@ private:
 	float MovementSpeedModifier = 500.f;
 	UPROPERTY()
 	APlayerController* PlayerController;
+
+	UGameViewportClient* ViewportClient;
 	
 	bool bCameraIsUnlocked = false;
 	FVector2d MousePosition;
