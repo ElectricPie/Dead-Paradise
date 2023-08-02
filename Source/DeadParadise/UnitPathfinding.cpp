@@ -94,6 +94,7 @@ void UUnitPathfinding::DrawRemainingPath()
 
 void UUnitPathfinding::DebugPathfinding()
 {
+	if (!Target) return;
 	FOnPathRequestFinishedSignature Callback = FOnPathRequestFinishedSignature::CreateUObject(this, &UUnitPathfinding::OnPathFound);
 	PathRequest->RequestPath(GetOwner()->GetActorLocation(), Target->GetActorLocation(), Callback);
 }
