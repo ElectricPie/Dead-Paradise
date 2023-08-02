@@ -5,6 +5,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Selectable.h"
 
 void ARtsPlayerController::BeginPlay()
 {
@@ -52,9 +53,12 @@ void ARtsPlayerController::Select()
 		{
 			if (AActor* HitActor = HitResult.GetActor())
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Selected %s"), *HitActor->GetActorLabel());
+				if (ISelectable* Selectable = Cast<ISelectable>(HitActor))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("%s is selectable"), *HitActor->GetActorLabel());
+					Selectable->Select();
+				}
 			}
 		}
-		
 	}
 }

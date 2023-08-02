@@ -11,7 +11,7 @@ class UInputMappingContext;
 /**
  * 
  */
-UCLASS()
+UCLASS()	
 class DEADPARADISE_API ARtsPlayerController : public APlayerController
 {
 	GENERATED_BODY()

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Selectable.h"
 #include "GameFramework/Actor.h"
 #include "Unit.generated.h"
 
@@ -11,7 +12,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnMoveFinishedSignature, bool /* bReachedTa
 class UCapsuleComponent;
 
 UCLASS(meta=(ScriptName="RtsUnit"))
-class DEADPARADISE_API AUnit : public AActor
+class DEADPARADISE_API AUnit : public AActor, public ISelectable
 {
 	GENERATED_BODY()
 	
@@ -53,4 +54,8 @@ private:
 	 * @brief Moves the unit to closest object below them
 	 */
 	void GroundUnit();
+
+// ISelectable implementations
+public:
+	virtual void Select() override;
 };
