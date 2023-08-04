@@ -27,6 +27,7 @@ void ARtsPlayerController::SetupInputComponent()
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
 		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Triggered, this, &ARtsPlayerController::Select);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ARtsPlayerController::MoveSelected);
 	}
 }
 
@@ -67,4 +68,9 @@ void ARtsPlayerController::Select()
 			}
 		}
 	}
+}
+
+void ARtsPlayerController::MoveSelected()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Moving Selected"));
 }

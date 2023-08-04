@@ -30,6 +30,9 @@ private:
 	UInputAction* SelectAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* MoveAction;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	float SelectionRaycastDistance = 2000.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Selection")
@@ -40,4 +43,6 @@ private:
 	TArray<USelectableComponent*> SelectedObjects;
 	
 	void Select();
+
+	void MoveSelected();
 };
