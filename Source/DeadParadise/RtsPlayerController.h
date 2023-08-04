@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "RtsPlayerController.generated.h"
 
+class USelectableComponent;
 class UInputAction;
 class UInputMappingContext;
 /**
@@ -30,6 +31,13 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	float SelectionRaycastDistance = 2000.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Selection")
+	AActor* SelectionMarker;
+
+	// Using a array for when multi select is implemented
+	UPROPERTY()
+	TArray<USelectableComponent*> SelectedObjects;
 	
 	void Select();
 };

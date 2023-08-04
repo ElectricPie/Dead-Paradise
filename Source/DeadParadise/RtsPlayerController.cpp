@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Selectable.h"
+#include "SelectableComponent.h"
 
 void ARtsPlayerController::BeginPlay()
 {
@@ -29,8 +30,12 @@ void ARtsPlayerController::SetupInputComponent()
 	}
 }
 
+// TODO: Implement method for selecting multiple
 void ARtsPlayerController::Select()
 {
+	// Clear the selected objects
+	SelectedObjects.Empty();
+	
 	int32 ViewportSizeX;
 	int32 ViewportSizeY;
 	GetViewportSize(ViewportSizeX, ViewportSizeY);
@@ -53,10 +58,11 @@ void ARtsPlayerController::Select()
 		{
 			if (AActor* HitActor = HitResult.GetActor())
 			{
-				if (ISelectable* Selectable = Cast<ISelectable>(HitActor))
+				if (USelectableComponent* Selectable = HitActor->GetComponentByClass<USelectableComponent>())
 				{
 					UE_LOG(LogTemp, Warning, TEXT("%s is selectable"), *HitActor->GetActorLabel());
-					Selectable->Select();
+					// Keep track of what objects are selected
+					SelectedObjects.Add(Selectable);
 				}
 			}
 		}
