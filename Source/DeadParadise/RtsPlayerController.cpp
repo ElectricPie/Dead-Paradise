@@ -75,18 +75,16 @@ void ARtsPlayerController::Select()
 	FVector HitLocation;
 	if (RaycastToMouse(HitLocation, HitActor))
 	{
-		// if (ISelectable* SelectedActor = Cast<ISelectable>(HitActor))
-		// {
-		// 	// Keep track of what objects are selected
-		// 	// SelectedObjects.Add(SelectedActor);
-		// 	SelectedActor->Select();
-		// }
 		if (USelectableComponent* Selectable = HitActor->GetComponentByClass<USelectableComponent>())
 		{
 			Selectable->Select();
 			// Keep track of what objects are selected
 			SelectedObjects.Add(Selectable);
 		}
+	}
+	else
+	{
+		SelectedObjects.Empty();
 	}
 }
 
