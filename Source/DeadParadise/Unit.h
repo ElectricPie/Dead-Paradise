@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Selectable.h"
 #include "GameFramework/Actor.h"
 #include "Unit.generated.h"
 
@@ -12,7 +11,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnMoveFinishedSignature, bool /* bReachedTa
 class UCapsuleComponent;
 
 UCLASS(meta=(ScriptName="RtsUnit"))
-class DEADPARADISE_API AUnit : public AActor, public ISelectable
+class DEADPARADISE_API AUnit : public AActor
 {
 	GENERATED_BODY()
 	
@@ -55,8 +54,7 @@ private:
 	 */
 	void GroundUnit();
 
-// ISelectable implementations
 public:
-	virtual void Select() override;
-	virtual void SetTarget(FVector& TargetPosition) override;
+	UFUNCTION(BlueprintCallable)
+	virtual void Select();
 };

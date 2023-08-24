@@ -31,6 +31,11 @@ void USelectableComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
+void USelectableComponent::Select() const
+{
+	OnSelectedEvent.Broadcast();
+}
+
 void USelectableComponent::SetTarget(const FVector& TargetPosition) const
 {
 	OnSetTargetEvent.Broadcast(TargetPosition);

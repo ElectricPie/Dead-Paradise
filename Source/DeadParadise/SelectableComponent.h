@@ -7,6 +7,8 @@
 #include "SelectableComponent.generated.h"
 
 class UUnitPathfinding;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectedSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSetTargetSignature, FVector, TargetPosition);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -26,9 +28,12 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-public:
+	UPROPERTY(BlueprintAssignable)
+	FOnSelectedSignature OnSelectedEvent;
+	
 	UPROPERTY(BlueprintAssignable)
 	FOnSetTargetSignature OnSetTargetEvent;
-	
+
+	void Select() const;
 	void SetTarget(const FVector& TargetPosition) const;
 };
