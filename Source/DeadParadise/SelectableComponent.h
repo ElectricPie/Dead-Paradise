@@ -6,8 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "SelectableComponent.generated.h"
 
-
 class UUnitPathfinding;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSetTargetSignature, FVector, TargetPosition);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class DEADPARADISE_API USelectableComponent : public UActorComponent
@@ -26,12 +26,9 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-private:
-	// TODO: Implement below
-	// Selectable Actions
-	UPROPERTY()
-	UUnitPathfinding* PathfindingComponent;
-
 public:
-	void SetTarget();
+	UPROPERTY(BlueprintAssignable)
+	FOnSetTargetSignature OnSetTargetEvent;
+	
+	void SetTarget(const FVector& TargetPosition) const;
 };

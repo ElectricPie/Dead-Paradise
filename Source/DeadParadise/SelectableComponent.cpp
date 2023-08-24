@@ -3,8 +3,6 @@
 
 #include "SelectableComponent.h"
 
-#include "UnitPathfinding.h"
-
 // Sets default values for this component's properties
 USelectableComponent::USelectableComponent()
 {
@@ -22,8 +20,6 @@ void USelectableComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
-	PathfindingComponent = GetOwner()->GetComponentByClass<UUnitPathfinding>();
 }
 
 
@@ -35,10 +31,7 @@ void USelectableComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
-void USelectableComponent::SetTarget()
+void USelectableComponent::SetTarget(const FVector& TargetPosition) const
 {
-	if (!PathfindingComponent) return;
-
-	// PathfindingComponent.Get()->PathfindToPosition();
+	OnSetTargetEvent.Broadcast(TargetPosition);
 }
-

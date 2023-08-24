@@ -97,8 +97,8 @@ void UUnitPathfinding::OnMoveFinished(bool bReachedTarget)
 	Unit->MoveToPoint(*Path[CurrentWaypointIndex], this, FName("OnMoveFinished"));
 }
 
-void UUnitPathfinding::PathfindToPosition(const FVector& WorldPosition)
+void UUnitPathfinding::PathfindToPosition(const FVector& TargetPosition)
 {
 	FOnPathRequestFinishedSignature Callback = FOnPathRequestFinishedSignature::CreateUObject(this, &UUnitPathfinding::OnPathFound);
-	PathRequest->RequestPath(GetOwner()->GetActorLocation(), WorldPosition, Callback);
+	PathRequest->RequestPath(GetOwner()->GetActorLocation(), TargetPosition, Callback);
 }

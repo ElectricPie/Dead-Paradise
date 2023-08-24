@@ -55,5 +55,6 @@ private:
 	void OnMoveFinished(bool bReachedTarget);
 
 public:
-	void PathfindToPosition(const FVector& WorldPosition);
+	UFUNCTION(BlueprintCallable)
+	void PathfindToPosition(const FVector& TargetPosition);
 };
