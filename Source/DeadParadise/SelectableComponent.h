@@ -7,6 +7,8 @@
 #include "SelectableComponent.generated.h"
 
 
+class UUnitPathfinding;
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class DEADPARADISE_API USelectableComponent : public UActorComponent
 {
@@ -27,5 +29,9 @@ public:
 private:
 	// TODO: Implement below
 	// Selectable Actions
-	// Pathfinding
+	UPROPERTY()
+	UUnitPathfinding* PathfindingComponent;
+
+public:
+	void Move();
 };

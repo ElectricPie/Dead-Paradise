@@ -41,6 +41,8 @@ private:
 	// Using a array for when multi select is implemented
 	UPROPERTY()
 	TArray<USelectableComponent*> SelectedObjects;
+
+	bool RaycastToMouse(FVector& HitLocation, AActor*& HitActor);
 	
 	void Select();
 

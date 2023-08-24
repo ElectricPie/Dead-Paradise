@@ -5,7 +5,6 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "Selectable.h"
 #include "SelectableComponent.h"
 
 void ARtsPlayerController::BeginPlay()
@@ -31,6 +30,37 @@ void ARtsPlayerController::SetupInputComponent()
 	}
 }
 
+bool ARtsPlayerController::RaycastToMouse(OUT FVector& HitLocation, OUT AActor*& HitActor)
+{
+	int32 ViewportSizeX;
+	int32 ViewportSizeY;
+	GetViewportSize(ViewportSizeX, ViewportSizeY);
+	
+	// Get the screen position of the mouse
+	if (FVector2D MouseScreenLocation; GetMousePosition(MouseScreenLocation.X, MouseScreenLocation.Y))
+	{
+		// Get the direction of the mouse
+		FVector WorldPosition;
+		FVector WorldDirection;
+		DeprojectScreenPositionToWorld(MouseScreenLocation.X, MouseScreenLocation.Y, WorldPosition, WorldDirection);
+	
+		// Raycast
+		FHitResult HitResult;
+		FCollisionQueryParams QueryParams;
+		QueryParams.AddIgnoredActor(this);
+	
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, WorldPosition,
+			WorldPosition + WorldDirection * SelectionRaycastDistance, ECC_Visibility, QueryParams))
+		{
+			HitActor = HitResult.GetActor();
+			HitLocation = HitResult.ImpactPoint;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 // TODO: Implement method for selecting multiple
 void ARtsPlayerController::Select()
 {
@@ -41,31 +71,15 @@ void ARtsPlayerController::Select()
 	int32 ViewportSizeY;
 	GetViewportSize(ViewportSizeX, ViewportSizeY);
 
-	// Get the screen position of the mouse
-	if (FVector2D MouseScreenLocation; GetMousePosition(MouseScreenLocation.X, MouseScreenLocation.Y))
+	AActor* HitActor;
+	FVector HitLocation;
+	if (RaycastToMouse(HitLocation, HitActor))
 	{
-		// Get the direction of the mouse
-		FVector WorldPosition;
-		FVector WorldDirection;
-		DeprojectScreenPositionToWorld(MouseScreenLocation.X, MouseScreenLocation.Y, WorldPosition, WorldDirection);
-
-		// Raycast
-		FHitResult HitResult;
-		FCollisionQueryParams QueryParams;
-		QueryParams.AddIgnoredActor(this);
-
-		if (GetWorld()->LineTraceSingleByChannel(HitResult, WorldPosition,
-			WorldPosition + WorldDirection * SelectionRaycastDistance, ECC_Visibility, QueryParams))
+		if (USelectableComponent* Selectable = HitActor->GetComponentByClass<USelectableComponent>())
 		{
-			if (AActor* HitActor = HitResult.GetActor())
-			{
-				if (USelectableComponent* Selectable = HitActor->GetComponentByClass<USelectableComponent>())
-				{
-					UE_LOG(LogTemp, Warning, TEXT("%s is selectable"), *HitActor->GetActorLabel());
-					// Keep track of what objects are selected
-					SelectedObjects.Add(Selectable);
-				}
-			}
+			UE_LOG(LogTemp, Warning, TEXT("%s is selectable"), *HitActor->GetActorLabel());
+			// Keep track of what objects are selected
+			SelectedObjects.Add(Selectable);
 		}
 	}
 }
