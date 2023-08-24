@@ -33,5 +33,5 @@ private:
 	UUnitPathfinding* PathfindingComponent;
 
 public:
-	void Move();
+	void SetTarget();
 };

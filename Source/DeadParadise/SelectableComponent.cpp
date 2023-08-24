@@ -35,7 +35,7 @@ void USelectableComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
-void USelectableComponent::Move()
+void USelectableComponent::SetTarget()
 {
 	if (!PathfindingComponent) return;
 

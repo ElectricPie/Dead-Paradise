@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "RtsPlayerController.generated.h"
 
-class USelectableComponent;
+class ISelectable;
 class UInputAction;
 class UInputMappingContext;
 /**
@@ -40,7 +40,7 @@ private:
 
 	// Using a array for when multi select is implemented
 	UPROPERTY()
-	TArray<USelectableComponent*> SelectedObjects;
+	TArray<ISelectable*> SelectedObjects;
 
 	bool RaycastToMouse(FVector& HitLocation, AActor*& HitActor);
 	

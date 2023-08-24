@@ -5,7 +5,9 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Selectable.h"
 #include "SelectableComponent.h"
+#include "Interfaces/ITargetDevice.h"
 
 void ARtsPlayerController::BeginPlay()
 {
@@ -75,16 +77,23 @@ void ARtsPlayerController::Select()
 	FVector HitLocation;
 	if (RaycastToMouse(HitLocation, HitActor))
 	{
-		if (USelectableComponent* Selectable = HitActor->GetComponentByClass<USelectableComponent>())
+		if (ISelectable* SelectedActor = Cast<ISelectable>(HitActor))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s is selectable"), *HitActor->GetActorLabel());
-			// Keep track of what objects are selected
-			SelectedObjects.Add(Selectable);
+			UE_LOG(LogTemp, Warning, TEXT("%s inherits selectable"), *HitActor->GetActorLabel());
+
+			SelectedActor->Select();
 		}
+		// if (USelectableComponent* Selectable = HitActor->GetComponentByClass<USelectableComponent>())
+		// {
+		// 	UE_LOG(LogTemp, Warning, TEXT("%s is selectable"), *HitActor->GetActorLabel());
+		// 	// Keep track of what objects are selected
+		// 	SelectedObjects.Add(Selectable);
+		// }
 	}
 }
 
 void ARtsPlayerController::MoveSelected()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Moving Selected"));
+	
 }
