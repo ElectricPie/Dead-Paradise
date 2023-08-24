@@ -6,8 +6,6 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Selectable.h"
-#include "SelectableComponent.h"
-#include "Interfaces/ITargetDevice.h"
 
 void ARtsPlayerController::BeginPlay()
 {
@@ -28,7 +26,7 @@ void ARtsPlayerController::SetupInputComponent()
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
 		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Triggered, this, &ARtsPlayerController::Select);
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ARtsPlayerController::MoveSelected);
+		EnhancedInputComponent->BindAction(SetTargetAction, ETriggerEvent::Triggered, this, &ARtsPlayerController::MoveSelected);
 	}
 }
 
@@ -79,8 +77,7 @@ void ARtsPlayerController::Select()
 	{
 		if (ISelectable* SelectedActor = Cast<ISelectable>(HitActor))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s inherits selectable"), *HitActor->GetActorLabel());
-
+			SelectedObjects.Add(SelectedActor);
 			SelectedActor->Select();
 		}
 		// if (USelectableComponent* Selectable = HitActor->GetComponentByClass<USelectableComponent>())
@@ -94,6 +91,13 @@ void ARtsPlayerController::Select()
 
 void ARtsPlayerController::MoveSelected()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Moving Selected"));
-	
+	AActor* HitActor;
+	FVector HitLocation;
+	if (RaycastToMouse(HitLocation, HitActor))
+	{
+		for (int32 i = 0; i < SelectedObjects.Num(); i++)
+		{
+			SelectedObjects[i]->SetTarget(HitLocation);
+		}
+	}
 }

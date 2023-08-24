@@ -23,4 +23,6 @@ class DEADPARADISE_API ISelectable
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual void Select() = 0;
+
+	virtual void SetTarget(FVector& TargetPosition) = 0;
 };

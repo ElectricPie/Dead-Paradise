@@ -97,3 +97,8 @@ void AUnit::Select()
 {
 	UE_LOG(LogTemp, Warning, TEXT("%s selected"), *GetActorLabel());
 }
+
+void AUnit::SetTarget(FVector& TargetPosition)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s moving to %s"), *GetActorLabel(), *TargetPosition.ToString());
+}

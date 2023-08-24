@@ -58,4 +58,5 @@ private:
 // ISelectable implementations
 public:
 	virtual void Select() override;
+	virtual void SetTarget(FVector& TargetPosition) override;
 };
