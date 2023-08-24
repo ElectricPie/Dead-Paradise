@@ -36,11 +36,6 @@ void UUnitPathfinding::BeginPlay()
 
 	// ...
 	PathRequest = GetWorld()->GetSubsystem<UPathRequestSubsystem>();
-
-	// TODO: Remove debug
-	if (!Unit) return;
-	FTimerHandle DebugTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(DebugTimerHandle, this, &UUnitPathfinding::DebugPathfinding, 0.5f, false);
 }
 
 
@@ -91,14 +86,6 @@ void UUnitPathfinding::DrawRemainingPath()
 	}
 }
 
-
-void UUnitPathfinding::DebugPathfinding()
-{
-	if (!Target) return;
-	FOnPathRequestFinishedSignature Callback = FOnPathRequestFinishedSignature::CreateUObject(this, &UUnitPathfinding::OnPathFound);
-	PathRequest->RequestPath(GetOwner()->GetActorLocation(), Target->GetActorLocation(), Callback);
-}
-
 void UUnitPathfinding::OnMoveFinished(bool bReachedTarget)
 {
 	if (CurrentWaypointIndex++ >= Path.Num() - 1)
@@ -108,4 +95,10 @@ void UUnitPathfinding::OnMoveFinished(bool bReachedTarget)
 	}
 	
 	Unit->MoveToPoint(*Path[CurrentWaypointIndex], this, FName("OnMoveFinished"));
+}
+
+void UUnitPathfinding::PathfindToPosition(const FVector& WorldPosition)
+{
+	FOnPathRequestFinishedSignature Callback = FOnPathRequestFinishedSignature::CreateUObject(this, &UUnitPathfinding::OnPathFound);
+	PathRequest->RequestPath(GetOwner()->GetActorLocation(), WorldPosition, Callback);
 }

@@ -52,8 +52,8 @@ private:
 	void DrawRemainingPath();
 
 	UFUNCTION()
-	void DebugPathfinding();
-
-	UFUNCTION()
 	void OnMoveFinished(bool bReachedTarget);
+
+public:
+	void PathfindToPosition(const FVector& WorldPosition);
 };
