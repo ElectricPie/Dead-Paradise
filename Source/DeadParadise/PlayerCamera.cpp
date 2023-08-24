@@ -31,18 +31,35 @@ void APlayerCamera::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 		}
 	}
+
+	// Get the game viewport client
+	ViewportClient = GetWorld()->GetGameViewport();
 }
 
 void APlayerCamera::UnlockCamera(const FInputActionValue& Value)
 {
 	bCameraIsUnlocked = Value.Get<bool>();
+
+	if (!PlayerController) return;
+	PlayerController->SetShowMouseCursor(!bCameraIsUnlocked);
+
+	// Store the cursors position before unlocking the camera and return it to that position once camera is locked
+	if (bCameraIsUnlocked)
+	{
+		PlayerController->GetMousePosition(MousePosition.X, MousePosition.Y);
+	}
+	else
+	{
+		PlayerController->SetMouseLocation(MousePosition.X, MousePosition.Y);
+	}
 }
 
 void APlayerCamera::MoveCamera(const FInputActionValue& Value)
@@ -52,8 +69,10 @@ void APlayerCamera::MoveCamera(const FInputActionValue& Value)
 	{
 		const FVector MoveAxisValue = Value.Get<FVector>();
 
-		FVector DeltaLocation = MoveAxisValue * MovementSpeedModifier * UGameplayStatics::GetWorldDeltaSeconds(this);
+		const FVector DeltaLocation = MoveAxisValue * MovementSpeedModifier * UGameplayStatics::GetWorldDeltaSeconds(this);
 		AddActorLocalOffset(DeltaLocation, true);
+		
+		PlayerController->SetMouseLocation(MousePosition.X, MousePosition.Y);
 	}
 }
 
@@ -61,6 +80,15 @@ void APlayerCamera::MoveCamera(const FInputActionValue& Value)
 void APlayerCamera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// Centre the mouse cursor so it doesn't hit the viewport borders and stop the mouse from moving
+	if (bCameraIsUnlocked)
+	{
+		// Get the viewport size
+		FVector2d ViewportSize;
+		ViewportClient->GetViewportSize(ViewportSize);
+		PlayerController->SetMouseLocation(ViewportSize.X / 2, ViewportSize.Y / 2);
+	}
 }
 
 // Called to bind functionality to input

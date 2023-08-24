@@ -52,8 +52,9 @@ private:
 	void DrawRemainingPath();
 
 	UFUNCTION()
-	void DebugPathfinding();
-
-	UFUNCTION()
 	void OnMoveFinished(bool bReachedTarget);
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void PathfindToPosition(const FVector& TargetPosition);
 };

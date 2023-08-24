@@ -47,15 +47,17 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Componets")
 	class UCapsuleComponent* CapsuleComponent;
-	
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class USpringArmComponent* SpringArmComponent;
-
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCameraComponent* CameraComponent;
-
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float MovementSpeedModifier = 500.f;
+	UPROPERTY()
+	APlayerController* PlayerController;
 
+	UGameViewportClient* ViewportClient;
+	
 	bool bCameraIsUnlocked = false;
+	FVector2d MousePosition;
 };

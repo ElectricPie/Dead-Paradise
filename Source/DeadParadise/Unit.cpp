@@ -92,3 +92,8 @@ void AUnit::GroundUnit()
 
 	SetActorLocation(UnitLocation);
 }
+
+void AUnit::Select()
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s selected"), *GetActorLabel());
+}

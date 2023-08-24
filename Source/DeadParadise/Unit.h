@@ -53,4 +53,8 @@ private:
 	 * @brief Moves the unit to closest object below them
 	 */
 	void GroundUnit();
+
+public:
+	UFUNCTION(BlueprintCallable)
+	virtual void Select();
 };
